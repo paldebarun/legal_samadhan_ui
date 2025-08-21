@@ -1,62 +1,8 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { RiArrowDownSLine } from "react-icons/ri";
-
-const practiceAreas = ["All", "Corporate Law", "Real Estate", "Insolvency & Restructuring", "Government Affairs"];
-
-const dummyPublications = [
-  {
-    practice_area: { _id: "1", name: "Corporate Law" },
-    published_on: new Date("2024-05-15"),
-    authors: ["John Doe", "Jane Smith"],
-    title: "Corporate Governance in 2024",
-    description: "An in-depth analysis of corporate governance trends and regulations.",
-    link: "https://example.com/publication/corporate-governance-2024"
-  },
-  {
-    practice_area: { _id: "2", name: "Real Estate" },
-    published_on: new Date("2023-11-10"),
-    authors: ["Emily Davis", "Michael Brown"],
-    title: "Real Estate Market Trends",
-    description: "Exploring the latest trends and legal challenges in the real estate sector.",
-    link: "https://example.com/publication/real-estate-trends-2023"
-  },
-  {
-    practice_area: { _id: "3", name: "Insolvency & Restructuring" },
-    published_on: new Date("2025-01-20"),
-    authors: ["Sarah Wilson", "David Lee"],
-    title: "Corporate Restructuring Strategies",
-    description: "Guidance on insolvency and restructuring best practices for corporates.",
-    link: "https://example.com/publication/corporate-restructuring-2025"
-  },
-  {
-    practice_area: { _id: "4", name: "Government Affairs" },
-    published_on: new Date("2024-08-05"),
-    authors: ["Laura Martinez", "Robert Johnson"],
-    title: "Navigating Public Policy & Regulations",
-    description: "Insights into government affairs and public policy compliance.",
-    link: "https://example.com/publication/government-affairs-2024"
-  },
-  {
-    practice_area: { _id: "1", name: "Corporate Law" },
-    published_on: new Date("2024-09-10"),
-    authors: ["Alice Brown"],
-    title: "Corporate Law Updates",
-    description: "Latest corporate law amendments and their impact.",
-    link: "https://example.com/publication/corporate-law-updates"
-  },
-  {
-    practice_area: { _id: "2", name: "Real Estate" },
-    published_on: new Date("2023-05-15"),
-    authors: ["Tom Green"],
-    title: "Property Law Simplified",
-    description: "Simplifying property law for investors and homeowners.",
-    link: "https://example.com/publication/property-law-simplified"
-  },
-];
-
-const years = ["All", "2021", "2022", "2023", "2024", "2025"];
+import axios from "axios";
 
 const Publication: React.FC = () => {
   const [practiceOpen, setPracticeOpen] = useState(false);
@@ -64,15 +10,52 @@ const Publication: React.FC = () => {
   const [yearOpen, setYearOpen] = useState(false);
   const [selectedYear, setSelectedYear] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
+  const [publications, setPublications] = useState<any[]>([]);
+  const [practiceAreas, setPracticeAreas] = useState<string[]>(["All"]);
+  const [years, setYears] = useState<string[]>(["All"]);
+  const [loading, setLoading] = useState(true); 
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true); // start loader
+
+        // Fetch publications
+        const { data } = await axios.get("http://localhost:5500/api/publications");
+        const formatted = data.map((pub: any) => ({
+          ...pub,
+          published_on: new Date(pub.published_on),
+        }));
+        setPublications(formatted);
+
+        // Extract unique years
+        const uniqueYears = Array.from(
+          new Set(formatted.map((pub: any) => pub.published_on.getFullYear().toString()))
+        ) as string[];
+        setYears(["All", ...uniqueYears]);
+
+        // Fetch practice areas
+        const res = await axios.get("http://localhost:5500/api/practice_area");
+        const areasFromApi = res.data.map((area: any) => area.name);
+        setPracticeAreas(["All", ...areasFromApi]);
+      } catch (e) {
+        console.error("Error fetching data", e);
+      } finally {
+        setLoading(false); // stop loader
+      }
+    };
+
+    fetchData();
+  }, []);
 
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
   const publicationsPerPage = 10;
 
   // Filtered publications
-  const filteredPublications = dummyPublications.filter(
+  const filteredPublications = publications.filter(
     (pub) =>
-      (selectedPractice === "All" || pub.practice_area.name === selectedPractice) &&
+      (selectedPractice === "All" || pub.practice_area?.name === selectedPractice) &&
       (selectedYear === "All" || pub.published_on.getFullYear().toString() === selectedYear) &&
       pub.title.toLowerCase().includes(searchQuery.toLowerCase())
   );
@@ -115,7 +98,7 @@ const Publication: React.FC = () => {
           value={searchQuery}
           onChange={(e) => {
             setSearchQuery(e.target.value);
-            setCurrentPage(1); // Reset page
+            setCurrentPage(1);
           }}
           className="w-full border px-4 py-3 rounded-full focus:outline-none"
         />
@@ -138,7 +121,7 @@ const Publication: React.FC = () => {
                   onClick={() => {
                     setSelectedPractice(area);
                     setPracticeOpen(false);
-                    setCurrentPage(1); // Reset page
+                    setCurrentPage(1);
                   }}
                 >
                   {area}
@@ -166,7 +149,7 @@ const Publication: React.FC = () => {
                   onClick={() => {
                     setSelectedYear(year);
                     setYearOpen(false);
-                    setCurrentPage(1); // Reset page
+                    setCurrentPage(1);
                   }}
                 >
                   {year}
@@ -179,42 +162,52 @@ const Publication: React.FC = () => {
 
       {/* Publication Listing */}
       <section className="publication-listing px-6 py-10 grid gap-6 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-        {currentPublications.map((pub, index) => (
-          <div key={index} className="border rounded-lg h-[300px] p-4 shadow hover:shadow-lg transition">
-            <h3 className="text-xl font-bold text-purple-950">{pub.title}</h3>
-            <p className="text-sm text-gray-500 mb-2">
-              {pub.practice_area.name} | {pub.published_on.toDateString()}
-            </p>
-            <p className="text-gray-700 mb-2">{pub.description}</p>
-            <p className="text-sm font-semibold mb-2">
-              Authors: {pub.authors.join(", ")}
-            </p>
-            <a
-              href={pub.link}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-blue-600 hover:underline"
-            >
-              Read More
-            </a>
+        {loading ? (
+          <div className="col-span-full flex justify-center items-center py-20">
+            <div className="w-12 h-12 border-4 border-purple-950 border-t-transparent rounded-full animate-spin"></div>
           </div>
-        ))}
+        ) : currentPublications.length > 0 ? (
+          currentPublications.map((pub, index) => (
+            <div key={index} className="border rounded-lg h-[300px] p-4 shadow hover:shadow-lg transition">
+              <h3 className="text-xl font-bold text-purple-950">{pub.title}</h3>
+              <p className="text-sm text-gray-500 mb-2">
+                {pub.practice_area?.name} | {pub.published_on.toDateString()}
+              </p>
+              <p className="text-gray-700 mb-2">{pub.description}</p>
+              <p className="text-sm font-semibold mb-2">
+                Authors: {pub.authors.join(", ")}
+              </p>
+              <a
+                href={pub.link}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-600 hover:underline"
+              >
+                Read More
+              </a>
+            </div>
+          ))
+        ) : (
+          <p className="col-span-full text-center text-gray-500">No publications found.</p>
+        )}
       </section>
 
       {/* Pagination */}
-      <div className="flex justify-center mt-6 gap-2 py-10">
-        {Array.from({ length: totalPages }, (_, i) => i + 1).map((num) => (
-          <button
-            key={num}
-            onClick={() => setCurrentPage(num)}
-            className={`px-4 py-2 rounded ${
-              currentPage === num ? "bg-purple-950 text-white" : "border"
-            }`}
-          >
-            {num}
-          </button>
-        ))}
-      </div>
+      {!loading && totalPages > 1 && (
+        <div className="flex justify-center mt-6 gap-2 py-10">
+          {Array.from({ length: totalPages }, (_, i) => i + 1).map((num) => (
+            <button
+              key={num}
+              onClick={() => setCurrentPage(num)}
+              className={`px-4 py-2 rounded ${
+                currentPage === num ? "bg-purple-950 text-white" : "border"
+              }`}
+            >
+              {num}
+            </button>
+          ))}
+        </div>
+      )}
     </div>
   );
 };

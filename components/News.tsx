@@ -1,54 +1,46 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
+import axios from "axios";
 
-const dummyNews = [
-  {
-    category: "News",
-    date: "2025-02-01",
-    title: "New Legal Updates Released",
-    description: "Government releases new legal updates impacting corporate law.",
-    link: "/news/legal-updates-2025",
-  },
-  {
-    category: "Event",
-    date: "2024-12-15",
-    title: "Annual Legal Seminar",
-    description: "Join industry experts discussing emerging trends in law.",
-    link: "/events/annual-legal-seminar-2024",
-  },
-  {
-    category: "News",
-    date: "2024-10-20",
-    title: "Court Ruling on Property Law",
-    description: "A landmark judgment has been delivered regarding property disputes.",
-    link: "/news/court-ruling-property-law-2024",
-  },
-  {
-    category: "Event",
-    date: "2025-03-05",
-    title: "Webinar on Real Estate Law",
-    description: "An online session covering the latest real estate regulations.",
-    link: "/events/webinar-real-estate-law-2025",
-  },
-  {
-    category: "News",
-    date: "2023-08-12",
-    title: "New Insolvency Guidelines",
-    description: "Updates to insolvency regulations for corporates and SMEs.",
-    link: "/news/insolvency-guidelines-2023",
-  },
-];
+interface NewsEvent {
+  _id: string;
+  title: string;
+  category: string;
+  date: string;
+  linkedin_url: string;
+  createdAt: string;
+  updatedAt: string;
+  __v: number;
+}
 
 const News: React.FC = () => {
+  const [newsEvents, setNewsEvents] = useState<NewsEvent[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
+  const [loading, setLoading] = useState(true); // loader state
   const itemsPerPage = 6;
+
+  useEffect(() => {
+    const fetchNewsEvents = async () => {
+      try {
+        setLoading(true);
+        const res = await axios.get("http://localhost:5500/api/news-events");
+        setNewsEvents(res.data);
+      } catch (err) {
+        console.error("Error fetching news & events:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchNewsEvents();
+  }, []);
 
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = dummyNews.slice(indexOfFirstItem, indexOfLastItem);
-  const totalPages = Math.ceil(dummyNews.length / itemsPerPage);
+  const currentItems = newsEvents.slice(indexOfFirstItem, indexOfLastItem);
+  const totalPages = Math.ceil(newsEvents.length / itemsPerPage);
 
   return (
     <div className="w-full">
@@ -73,49 +65,59 @@ const News: React.FC = () => {
         <p className="text-4xl md:text-6xl lg:text-8xl font-bold text-purple-950">& Events</p>
       </div>
 
-      {/* News/Event Listing */}
-      <section className="news-listing px-6 py-10 grid gap-6 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-        {currentItems.map((item, index) => (
-          <Link
-            key={index}
-            href={item.link}
-            className="bg-white h-[300px] min-h-[300px] max-h-[300px] rounded-xl shadow-lg p-6 flex flex-col justify-between border-purple-900 hover:cursor-pointer border-2 hover:shadow-xl transition"
-          >
-            <span
-              className={`px-3 py-1 text-sm font-semibold rounded-full w-fit ${
-                item.category === "News"
-                  ? "bg-purple-900 text-white"
-                  : "bg-white border-2 border-purple-900 text-purple-900"
-              }`}
-            >
-              {item.category}
-            </span>
-            <p className="text-gray-700 text-sm line-clamp-3">{item.description}</p>
-            <span className="text-xs text-gray-500">
-              {new Intl.DateTimeFormat("en-GB", {
-                year: "numeric",
-                month: "short",
-                day: "numeric",
-              }).format(new Date(item.date))}
-            </span>
-          </Link>
-        ))}
-      </section>
-
-      {/* Pagination */}
-      <div className="flex justify-center mt-6 gap-2 py-10">
-        {Array.from({ length: totalPages }, (_, i) => i + 1).map((num) => (
-          <button
-            key={num}
-            onClick={() => setCurrentPage(num)}
-            className={`px-4 py-2 rounded ${
-              currentPage === num ? "bg-purple-950 text-white" : "border"
-            }`}
-          >
-            {num}
-          </button>
-        ))}
+      {/* Loader */}
+      {loading ? (
+        <div className="col-span-full flex justify-center items-center py-20">
+        <div className="w-12 h-12 border-4 border-purple-950 border-t-transparent rounded-full animate-spin"></div>
       </div>
+      ) : (
+        <>
+          {/* News/Event Listing */}
+          <section className="news-listing px-6 py-10 grid gap-6 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+            {currentItems.map((item) => (
+              <Link
+                key={item._id}
+                href={item.linkedin_url}
+                target="_blank"
+                className="bg-white h-[300px] min-h-[300px] max-h-[300px] rounded-xl shadow-lg p-6 flex flex-col justify-between border-purple-900 hover:cursor-pointer border-2 hover:shadow-xl transition"
+              >
+                <span
+                  className={`px-3 py-1 text-sm font-semibold rounded-full w-fit ${
+                    item.category.toLowerCase() === "news"
+                      ? "bg-purple-900 text-white"
+                      : "bg-white border-2 border-purple-900 text-purple-900"
+                  }`}
+                >
+                  {item.category}
+                </span>
+                <p className="text-gray-700 text-sm line-clamp-3">{item.title}</p>
+                <span className="text-xs text-gray-500">
+                  {new Intl.DateTimeFormat("en-GB", {
+                    year: "numeric",
+                    month: "short",
+                    day: "numeric",
+                  }).format(new Date(item.date))}
+                </span>
+              </Link>
+            ))}
+          </section>
+
+          {/* Pagination */}
+          <div className="flex justify-center mt-6 gap-2 py-10">
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map((num) => (
+              <button
+                key={num}
+                onClick={() => setCurrentPage(num)}
+                className={`px-4 py-2 rounded ${
+                  currentPage === num ? "bg-purple-950 text-white" : "border"
+                }`}
+              >
+                {num}
+              </button>
+            ))}
+          </div>
+        </>
+      )}
     </div>
   );
 };
