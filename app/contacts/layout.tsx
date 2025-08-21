@@ -2,7 +2,6 @@ import type { ReactNode } from "react";
 import Head from "next/head";
 
 const preloadImages = [
-  "/cards.jpeg",
   "/nehru.jpeg",
   "/vr_krishna_iyer.jpeg",
   "/br_ambedkar_image.jpeg",

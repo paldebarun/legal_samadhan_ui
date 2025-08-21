@@ -7,109 +7,59 @@ import "swiper/css/navigation";
 import "swiper/css/pagination";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { EffectFade, Autoplay } from "swiper/modules";
+import { useRouter } from "next/navigation";
+import {banner_data} from "../utils/banner_data"
 
-const banner_data = [
-  {
-    heading: "Upholding Justice for All",
-    paragraph:
-      "Justice is not merely a legal term; it is the foundation of a civilized society. It ensures that fairness prevails over bias, and that every citizen, regardless of status, receives equal treatment under the law. We are committed to safeguarding these principles, ensuring that no voice goes unheard, and no right is left unprotected.",
-    image: "/home/_.jpeg",
-  },
-  {
-    heading: "Empowering Through Legal Awareness",
-    paragraph:
-      "An informed citizen is a powerful citizen. Legal awareness bridges the gap between the rights we possess and the ability to defend them. By educating communities about the law, we encourage people to stand up for themselves and others.",
-    image: "/home/c211e859-c8a5-465b-b892-aeb8989199db.jpeg",
-  },
-//   {
-//     heading: "Defending Rights, Preserving Dignity",
-//     paragraph:
-//       "Every individual has the right to live with dignity, free from oppression and exploitation. The law exists not just to punish wrongdoing but to protect the values that make life meaningful.",
-//     image: "/home/law lawyer aesthetic alex claremont diaz red white and royal blue.jpeg",
-//   },
-  
-];
 
-const publications_data = [
+
+const dummyPublications = [
   {
-    title: "The Changing Face of Indian Corporate Law",
-    description:
-      "An overview of recent amendments impacting corporate governance and compliance requirements in India.",
-    author: "Adv. Meera Sharma",
-    date: "2025-06-12",
-    backgroundImage: "/cards.jpeg",
+    practice_area: { _id: "1", name: "Corporate Law" },
+    published_on: new Date("2024-05-15"),
+    authors: ["John Doe", "Jane Smith"],
+    title: "Corporate Governance in 2024",
+    description: "An in-depth analysis of corporate governance trends and regulations.",
+    link: "https://example.com/publication/corporate-governance-2024"
   },
   {
-    title: "Constitutional Safeguards for Freedom of Speech",
-    description:
-      "A detailed analysis of Article 19 and the reasonable restrictions imposed by the Indian legal framework.",
-    author: "Prof. Rajesh Malhotra",
-    date: "2025-05-28",
-    backgroundImage: "/cards.jpeg",
+    practice_area: { _id: "2", name: "Real Estate" },
+    published_on: new Date("2023-11-10"),
+    authors: ["Emily Davis", "Michael Brown"],
+    title: "Real Estate Market Trends",
+    description: "Exploring the latest trends and legal challenges in the real estate sector.",
+    link: "https://example.com/publication/real-estate-trends-2023"
   },
   {
-    title: "Cybersecurity Laws in the Digital Era",
-    description:
-      "Understanding the IT Act, data protection laws, and their implications for businesses in India.",
-    author: "Adv. Karan Patel",
-    date: "2025-05-10",
-    backgroundImage: "/cards.jpeg",
+    practice_area: { _id: "3", name: "Insolvency & Restructuring" },
+    published_on: new Date("2025-01-20"),
+    authors: ["Sarah Wilson", "David Lee"],
+    title: "Corporate Restructuring Strategies",
+    description: "Guidance on insolvency and restructuring best practices for corporates.",
+    link: "https://example.com/publication/corporate-restructuring-2025"
   },
   {
-    title: "Judicial Activism and Social Justice",
-    description:
-      "Exploring the role of the judiciary in promoting equality and protecting marginalized communities.",
-    author: "Justice (Retd.) Neha Iyer",
-    date: "2025-04-18",
-    backgroundImage: "/cards.jpeg",
+    practice_area: { _id: "4", name: "Government Affairs" },
+    published_on: new Date("2024-08-05"),
+    authors: ["Laura Martinez", "Robert Johnson"],
+    title: "Navigating Public Policy & Regulations",
+    description: "Insights into government affairs and public policy compliance.",
+    link: "https://example.com/publication/government-affairs-2024"
   },
   {
-    title: "The Evolving Landscape of Environmental Law",
-    description:
-      "How Indian laws are adapting to address climate change and sustainable development challenges.",
-    author: "Dr. Sameer Gupta",
-    date: "2025-04-01",
-    backgroundImage: "/cards.jpeg",
+    practice_area: { _id: "1", name: "Corporate Law" },
+    published_on: new Date("2024-09-10"),
+    authors: ["Alice Brown"],
+    title: "Corporate Law Updates",
+    description: "Latest corporate law amendments and their impact.",
+    link: "https://example.com/publication/corporate-law-updates"
   },
   {
-    title: "ADR Mechanisms: Arbitration and Mediation in India",
-    description:
-      "A guide to alternative dispute resolution methods and their increasing popularity in India.",
-    author: "Adv. Ritu Verma",
-    date: "2025-03-15",
-    backgroundImage: "/cards.jpeg",
-  },
-  {
-    title: "The Intersection of AI and Indian Law",
-    description:
-      "Legal challenges and regulatory considerations for artificial intelligence technologies in India.",
-    author: "Adv. Arjun Nair",
-    date: "2025-03-02",
-    backgroundImage: "/cards.jpeg",
-  },
-  {
-    title: "Women’s Rights and Legal Reforms",
-    description:
-      "Recent legal developments empowering women and ensuring gender equality in India.",
-    author: "Adv. Priya Kapoor",
-    date: "2025-02-18",
-    backgroundImage: "/cards.jpeg",
-  },
-  {
-    title: "Intellectual Property Laws in a Globalized Market",
-    description:
-      "Protecting innovation and creativity through robust IP enforcement mechanisms.",
-    author: "Prof. Anil Khanna",
-    date: "2025-02-05",
-    backgroundImage: "/cards.jpeg",
-  },
-  {
-    title: "Taxation Reforms and Business Compliance",
-    description:
-      "Insights into GST updates, corporate tax changes, and compliance obligations for companies.",
-    author: "CA & Legal Expert Sunita Rao",
-    date: "2025-01-25",
-    backgroundImage: "/cards.jpeg",
+    practice_area: { _id: "2", name: "Real Estate" },
+    published_on: new Date("2023-05-15"),
+    authors: ["Tom Green"],
+    title: "Property Law Simplified",
+    description: "Simplifying property law for investors and homeowners.",
+    link: "https://example.com/publication/property-law-simplified"
   },
 ];
 
@@ -145,6 +95,7 @@ const news_and_events_data = [
 ];
 
 export default function HomeClient() {
+  const router = useRouter();
   return (
     <div className="w-full">
       {/* Hero Section */}
@@ -192,15 +143,17 @@ export default function HomeClient() {
 
       {/* Button */}
       <div className="w-full md:py-10 px-6">
-        <button className="relative md:w-4/12 lg:w-4/12 hover:cursor-pointer text-xl sm:text-2xl px-3 lg:text-4xl rounded-full py-3 md:py-4 overflow-hidden group border-2 border-transparent hover:border-purple-900 transition-all duration-300">
-          <span className="absolute inset-0 bg-purple-900 transition-all duration-300"></span>
-          <span className="absolute inset-0 bg-white -translate-x-full group-hover:translate-x-0 transition-transform duration-300 ease-in-out"></span>
-          <span className="relative z-10 text-white group-hover:text-purple-900 transition-colors duration-300">
-            See all publications
-          </span>
-        </button>
-      </div>
-
+      <button
+        onClick={() => router.push("/publications")}
+        className="relative md:w-4/12 lg:w-4/12 hover:cursor-pointer text-xl sm:text-2xl px-3 lg:text-4xl rounded-full py-3 md:py-4 overflow-hidden group border-2 border-transparent hover:border-purple-900 transition-all duration-300"
+      >
+        <span className="absolute inset-0 bg-purple-900 transition-all duration-300"></span>
+        <span className="absolute inset-0 bg-white -translate-x-full group-hover:translate-x-0 transition-transform duration-300 ease-in-out"></span>
+        <span className="relative z-10 text-white group-hover:text-purple-900 transition-colors duration-300">
+          See all publications
+        </span>
+      </button>
+    </div>
       {/* Publications Slider */}
       <div className="publications-highlights w-full px-6 py-10">
         <Swiper
@@ -219,32 +172,34 @@ export default function HomeClient() {
             1440: { slidesPerView: 4 },
           }}
         >
-          {publications_data.map((pub, index) => (
+          {dummyPublications.map((pub, index) => (
             <SwiperSlide
-              key={index}
-              className="relative h-[300px] hover:cursor-pointer min-h-[300px] max-h-[300px] overflow-hidden rounded-xl shadow-lg flex flex-col justify-end"
-              style={{
-                backgroundImage: `url(${pub.backgroundImage})`,
-                backgroundSize: "cover",
-                backgroundPosition: "center",
-              }}
-            >
-              <div className="absolute inset-0 bg-black/50"></div>
-              <div className="relative z-10 text-white p-4">
-                <h3 className="text-xl font-bold mb-2">{pub.title}</h3>
-                <p className="text-sm mb-3 line-clamp-3">{pub.description}</p>
-                <div className="flex justify-between text-xs opacity-80">
-                  <span>{pub.author}</span>
-                  <span>{new Date(pub.date).toISOString().split("T")[0]}</span>
-
-                </div>
+            key={index}
+            className="bg-white h-[300px] min-h-[300px] max-h-[300px] rounded-xl shadow-lg p-6 flex flex-col justify-between border-purple-900 hover:cursor-pointer border-2"
+          >
+            <div className="p-4">
+              <h3 className="text-xl font-bold mb-2 text-purple-950">{pub.title}</h3>
+              <p className="text-sm mb-3 line-clamp-3 text-gray-700">{pub.description}</p>
+              <div className="flex justify-between text-xs opacity-80 text-gray-600">
+                <span>{pub.authors.join(", ")}</span>
+                <span>{pub.published_on.toISOString().split("T")[0]}</span>
               </div>
-            </SwiperSlide>
+              <a
+                href={pub.link}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-600 underline text-xs mt-2 block"
+              >
+                Read More
+              </a>
+            </div>
+          </SwiperSlide>
+          
           ))}
         </Swiper>
       </div>
 
-      {/* Latest News & Events Heading */}
+      {/* Latest News & Events Section */}
       <div className="sm:flex-row flex-col flex gap-1 px-6 py-10">
         <p className="text-black text-4xl sm:text-5xl md:text-7xl font-bold">
           Latest{" "}
@@ -252,17 +207,6 @@ export default function HomeClient() {
         <span className="text-purple-900 text-4xl sm:text-5xl md:text-7xl font-bold">
           News & Events
         </span>
-      </div>
-
-      {/* Button */}
-      <div className="w-full py-10 px-6">
-        <button className="relative md:w-4/12 lg:w-4/12 hover:cursor-pointer text-xl sm:text-2xl px-3 lg:text-4xl rounded-full py-3 md:py-4 overflow-hidden group border-2 border-transparent hover:border-purple-900 transition-all duration-300">
-          <span className="absolute inset-0 bg-purple-900 transition-all duration-300"></span>
-          <span className="absolute inset-0 bg-white -translate-x-full group-hover:translate-x-0 transition-transform duration-300 ease-in-out"></span>
-          <span className="relative z-10 text-white group-hover:text-purple-900 transition-colors duration-300">
-            See all News and Events
-          </span>
-        </button>
       </div>
 
       {/* News & Events Slider */}
@@ -297,8 +241,8 @@ export default function HomeClient() {
                 {item.description}
               </p>
               <span className="text-xs text-gray-500">
-  {new Intl.DateTimeFormat("en-GB", { year: "numeric", month: "short", day: "numeric" }).format(new Date(item.date))}
-</span>
+                {new Intl.DateTimeFormat("en-GB", { year: "numeric", month: "short", day: "numeric" }).format(new Date(item.date))}
+              </span>
             </SwiperSlide>
           ))}
         </Swiper>

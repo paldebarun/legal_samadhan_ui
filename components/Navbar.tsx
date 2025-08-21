@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link"; 
 import { HiMenu } from "react-icons/hi";
 import { RiCloseFill } from "react-icons/ri";
+import Image from "next/image";
 
 interface NavLink {
   title: string;
@@ -27,9 +28,19 @@ const Navbar = () => {
     <header className="bg-white shadow-md sticky top-0 z-50 py-4">
       <div className="flex items-center justify-between px-4 py-3 lg:px-10">
         {/* Logo / Brand Name */}
-        <Link href="/" className="text-xl font-bold text-gray-800">
-  <span className="text-purple-900">LEGAL</span>
-  <span> SAMADHAN</span>
+        
+        <Link href="/" className="text-xl  font-bold text-gray-800">
+        <Image 
+    src="/site_logo.jpg" 
+    width={50} 
+    height={50} 
+    alt="Legal Samadhan Logo" 
+    className="mx-auto"
+  />
+
+        <span className="text-purple-900 hidden md:inline">LEGAL</span>
+        <span className="hidden md:inline"> SAMADHAN</span>
+
 </Link>
 
         {/* Desktop Nav */}

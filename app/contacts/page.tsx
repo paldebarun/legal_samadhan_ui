@@ -1,26 +1,36 @@
 import type { Metadata } from "next";
 import ContactComponent from "@/components/Contact";
 
-// Metadata for SEO
+const contactImages = [
+  "/br_ambedkar_image.jpeg",
+  "/nehru.jpeg",
+  "/vr_krishna_iyer.jpeg",
+];
+
 export const metadata: Metadata = {
-  title: "Contact Us | Law Firm",
+  title: "Contact Us | Legal Samadhan - Expert Legal Advice",
   description:
-    "Get in touch with our legal experts. Ask queries about corporate law, real estate, insolvency, or any legal advice.",
+    "Get in touch with Legal Samadhan's expert legal team. Ask queries or seek advice on corporate law, real estate, insolvency, or any legal matters. Our lawyers are here to guide you with clarity and precision.",
   keywords:
-    "Contact, Legal Queries, Lawyers, Corporate Law, Real Estate Law, Legal Advice",
+    "Legal Samadhan, Contact, Legal Queries, Lawyers, Corporate Law, Real Estate Law, Insolvency Advice, Legal Consultation, Legal Support, Law Firm",
   openGraph: {
-    title: "Contact Us - Law Firm",
+    title: "Contact Legal Samadhan - Expert Legal Team",
     description:
-      "Reach out to our experienced legal team for any queries or consultations.",
-    images: [
-      {
-        url: "/cards.jpeg",
-        width: 1200,
-        height: 630,
-        alt: "Contact Our Lawyers",
-      },
-    ],
+      "Reach out to Legal Samadhan's experienced legal team for consultations, advice, or legal queries across corporate, real estate, insolvency, and other practice areas.",
+    images: contactImages.map((url) => ({
+      url,
+      width: 1200,
+      height: 630,
+      alt: "Legal Samadhan Contact Image",
+    })),
     type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Contact Legal Samadhan - Expert Legal Advice",
+    description:
+      "Connect with Legal Samadhan's legal experts for queries or advice on corporate law, real estate, insolvency, and other legal matters.",
+    images: contactImages,
   },
 };
 

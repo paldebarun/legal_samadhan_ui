@@ -4,12 +4,24 @@ import Head from "next/head";
 
 
 const preloadImages = [
-  "/about_Us.jpg",
+  // Hero Section
+  "/about/when heroes fall by giana darling.jpeg",
+
+  // Swiper Images
+  "/about/f379a178-10db-4d41-9055-05cef71089f4.jpeg",
+  "/about/d4e108a8-ded6-4f94-85a1-6274f81b4c18.jpeg",
+  "/about/Trust, transparency & modern contract….jpeg",
+  "/about/Illigal Law.jpeg",
+
+  // Founder Images
+  "/about/ATTAR-SINGH-copy-768x964.jpg",
+  "/about/VINOD-GAHLOT-e1550170635108-768x966.jpg",
+
+  // Mission
   "/mission.jpg",
-  "/about-banner.jpg",
-  "/practice-areas.jpg",
-  "https://aquilaw.com/front/assets/img/about-banner.jpg",
-  "https://aquilaw.com/front/assets/img/practice-areas.jpg",
+
+  // Practice Areas Section
+  "/about/Law, Order and Justice.jpeg",
 ];
 
 export default function AboutLayout({ children }: { children: ReactNode }) {
