@@ -7,48 +7,58 @@ import toast from "react-hot-toast";
 import {publications_Url} from '../utils/config'
 import {practice_area_url} from '../utils/config'
 
+interface Publication {
+  title: string;
+  description: string;
+  authors: string[];
+  link: string;
+  practice_area?: { name: string };
+  published_on: Date; 
+}
+
 const Publication: React.FC = () => {
   const [practiceOpen, setPracticeOpen] = useState(false);
   const [selectedPractice, setSelectedPractice] = useState("All");
   const [yearOpen, setYearOpen] = useState(false);
   const [selectedYear, setSelectedYear] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
-  const [publications, setPublications] = useState<any[]>([]);
+  const [publications, setPublications] = useState<Publication[]>([]);
   const [practiceAreas, setPracticeAreas] = useState<string[]>(["All"]);
   const [years, setYears] = useState<string[]>(["All"]);
   const [loading, setLoading] = useState(true); 
 
+
   useEffect(() => {
     const fetchData = async () => {
       try {
-        setLoading(true); // start loader
-
+        setLoading(true);
+  
         // Fetch publications
-        const { data } = await axios.get(publications_Url);
-        const formatted = data.map((pub: any) => ({
+        const { data }: { data: Publication[] } = await axios.get(publications_Url);
+        const formatted: Publication[] = data.map((pub) => ({
           ...pub,
           published_on: new Date(pub.published_on),
         }));
         setPublications(formatted);
-
+  
         // Extract unique years
         const uniqueYears = Array.from(
-          new Set(formatted.map((pub: any) => pub.published_on.getFullYear().toString()))
-        ) as string[];
+          new Set(formatted.map((pub) => pub.published_on.getFullYear().toString()))
+        );
         setYears(["All", ...uniqueYears]);
-
+  
         // Fetch practice areas
-        const res = await axios.get(practice_area_url);
-        const areasFromApi = res.data.map((area: any) => area.name);
+        const res = await axios.get<{ name: string }[]>(practice_area_url);
+        const areasFromApi = res.data.map((area) => area.name);
         setPracticeAreas(["All", ...areasFromApi]);
       } catch (e) {
-        toast.error("Internal server error")
+        toast.error("Internal server error");
         console.error("Error fetching data", e);
       } finally {
-        setLoading(false); 
+        setLoading(false);
       }
     };
-
+  
     fetchData();
   }, []);
 
