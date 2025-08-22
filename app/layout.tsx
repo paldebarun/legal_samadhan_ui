@@ -1,8 +1,9 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import Navbar from "@/components/Navbar"; 
+import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Toaster } from "react-hot-toast";
+import { Providers } from "./provider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -22,11 +23,12 @@ const preloaded_images = [
 
 export default function RootLayout({
   children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+}: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en">
+    <html
+      lang="en"
+      className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+    >
       <head>
         {preloaded_images.map((src, idx) => (
           <link key={idx} rel="preload" as="image" href={src} />
@@ -34,10 +36,10 @@ export default function RootLayout({
         <link rel="icon" href="/site_logo.jpg" />
       </head>
 
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+      <body className="antialiased">
         <Navbar />
         <Toaster position="top-center" reverseOrder={false} />
-        <main>{children}</main>
+        <Providers>{children}</Providers>
         <Footer />
       </body>
     </html>

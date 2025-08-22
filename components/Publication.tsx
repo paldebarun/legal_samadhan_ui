@@ -4,63 +4,92 @@ import React, { useState, useEffect } from "react";
 import { RiArrowDownSLine } from "react-icons/ri";
 import axios from "axios";
 import toast from "react-hot-toast";
-import {publications_Url} from '../utils/config'
-import {practice_area_url} from '../utils/config'
+import { publications_Url, practice_area_url } from "../utils/config";
+import { useSelector, useDispatch } from "react-redux";
+import { RootState } from "../store/store"; 
+import {
+  setPublications,
+  setLoading,
+  setError,
+} from "../store/slices/publicationSlice";
 
-interface Publication {
+
+interface PublicationType {
   title: string;
   description: string;
-  authors: string[];
+  authors: string[]; 
   link: string;
-  practice_area?: { name: string };
-  published_on: Date; 
+  published_on: string;
+ 
 }
 
 const Publication: React.FC = () => {
+  const dispatch = useDispatch();
+  const {
+    publications,
+    practiceAreas,
+    years,
+    loading,
+  } = useSelector((state: RootState) => state.publication);
+
   const [practiceOpen, setPracticeOpen] = useState(false);
   const [selectedPractice, setSelectedPractice] = useState("All");
   const [yearOpen, setYearOpen] = useState(false);
   const [selectedYear, setSelectedYear] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
-  const [publications, setPublications] = useState<Publication[]>([]);
-  const [practiceAreas, setPracticeAreas] = useState<string[]>(["All"]);
-  const [years, setYears] = useState<string[]>(["All"]);
-  const [loading, setLoading] = useState(true); 
-
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        setLoading(true);
-  
-        // Fetch publications
-        const { data }: { data: Publication[] } = await axios.get(publications_Url);
-        const formatted: Publication[] = data.map((pub) => ({
+        dispatch(setLoading(true));
+
+   
+        const { data } = await axios.get<PublicationType[]>(publications_Url);
+        const formatted = data.map((pub:PublicationType) => ({
           ...pub,
-          published_on: new Date(pub.published_on),
+          published_on: pub.published_on, 
         }));
-        setPublications(formatted);
-  
-        // Extract unique years
-        const uniqueYears = Array.from(
-          new Set(formatted.map((pub) => pub.published_on.getFullYear().toString()))
+        
+
+    
+        const uniqueYears: string[] = Array.from(
+          new Set(
+            formatted.map((pub: PublicationType) => {
+              const date = new Date(pub.published_on); 
+              return date.getFullYear().toString();
+            })
+          )
         );
-        setYears(["All", ...uniqueYears]);
-  
-        // Fetch practice areas
+
+
         const res = await axios.get<{ name: string }[]>(practice_area_url);
         const areasFromApi = res.data.map((area) => area.name);
-        setPracticeAreas(["All", ...areasFromApi]);
+
+        dispatch(
+          setPublications({
+            publications: formatted,
+            practiceAreas: ["All", ...areasFromApi],
+            years: ["All", ...uniqueYears],
+          })
+        );
       } catch (e) {
+        dispatch(setError("Internal server error"));
         toast.error("Internal server error");
         console.error("Error fetching data", e);
       } finally {
-        setLoading(false);
+        dispatch(setLoading(false));
       }
     };
-  
-    fetchData();
-  }, []);
+
+    
+    if (publications.length === 0) {
+      console.log("calling the api for publication")
+      fetchData();
+    }
+    else{
+      console.log("Not calling the publication api")
+    }
+  });
 
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
@@ -69,15 +98,20 @@ const Publication: React.FC = () => {
   // Filtered publications
   const filteredPublications = publications.filter(
     (pub) =>
-      (selectedPractice === "All" || pub.practice_area?.name === selectedPractice) &&
-      (selectedYear === "All" || pub.published_on.getFullYear().toString() === selectedYear) &&
+      (selectedPractice === "All" ||
+        pub.practice_area?.name === selectedPractice) &&
+        (selectedYear === "All" ||
+        new Date(pub.published_on).getFullYear().toString() === selectedYear) &&
       pub.title.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   // Pagination calculations
   const indexOfLastPub = currentPage * publicationsPerPage;
   const indexOfFirstPub = indexOfLastPub - publicationsPerPage;
-  const currentPublications = filteredPublications.slice(indexOfFirstPub, indexOfLastPub);
+  const currentPublications = filteredPublications.slice(
+    indexOfFirstPub,
+    indexOfLastPub
+  );
   const totalPages = Math.ceil(filteredPublications.length / publicationsPerPage);
 
   return (
@@ -86,7 +120,8 @@ const Publication: React.FC = () => {
       <section
         className="hero-section relative w-full flex items-center justify-center h-[300px] md:h-[400px] lg:h-[500px]"
         style={{
-          backgroundImage: "url('/publications/35db0edc-6cea-4aa8-80b8-361e33d2e618.jpeg')",
+          backgroundImage:
+            "url('/publications/35db0edc-6cea-4aa8-80b8-361e33d2e618.jpeg')",
           backgroundSize: "cover",
           backgroundPosition: "center",
         }}
@@ -99,8 +134,12 @@ const Publication: React.FC = () => {
 
       {/* Heading */}
       <div className="w-full flex flex-col sm:flex-row gap-1 py-6 px-6">
-        <span className="text-4xl md:text-6xl lg:text-8xl font-bold">Our Briefings</span>
-        <p className="text-4xl md:text-6xl lg:text-8xl font-bold text-purple-950">& Insights</p>
+        <span className="text-4xl md:text-6xl lg:text-8xl font-bold">
+          Our Briefings
+        </span>
+        <p className="text-4xl md:text-6xl lg:text-8xl font-bold text-purple-950">
+          & Insights
+        </p>
       </div>
 
       {/* Filters */}
@@ -180,12 +219,16 @@ const Publication: React.FC = () => {
           <div className="col-span-full flex justify-center items-center py-20">
             <div className="w-12 h-12 border-4 border-purple-950 border-t-transparent rounded-full animate-spin"></div>
           </div>
-        ) : currentPublications.length > 0 ? (
+        ) : (
           currentPublications.map((pub, index) => (
-            <div key={index} className="border rounded-lg h-[300px] p-4 shadow hover:shadow-lg transition">
+            <div
+              key={index}
+              className="border rounded-lg h-[300px] p-4 shadow hover:shadow-lg transition"
+            >
               <h3 className="text-xl font-bold text-purple-950">{pub.title}</h3>
               <p className="text-sm text-gray-500 mb-2">
-                {pub.practice_area?.name} | {pub.published_on.toDateString()}
+                {pub.practice_area?.name} |{" "}
+                {new Date(pub.published_on).toDateString()}
               </p>
               <p className="text-gray-700 mb-2">{pub.description}</p>
               <p className="text-sm font-semibold mb-2">
@@ -201,9 +244,7 @@ const Publication: React.FC = () => {
               </a>
             </div>
           ))
-        ) : (
-          <p className="col-span-full text-center text-gray-500">No publications found.</p>
-        )}
+        ) }
       </section>
 
       {/* Pagination */}

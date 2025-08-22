@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect,useState } from "react";
 import "swiper/css";
 import "swiper/css/effect-fade";
 import "swiper/css/navigation";
@@ -8,96 +8,147 @@ import "swiper/css/pagination";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { EffectFade, Autoplay } from "swiper/modules";
 import { useRouter } from "next/navigation";
-import {banner_data} from "../utils/banner_data"
+import { banner_data } from "../utils/banner_data";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "../store/store";
+import {
+  setPublications,
+  setLoading as setPublicationsLoading,
+  setError as setPublicationsError,
+} from "../store/slices/publicationSlice";
+import {
+  setNewsEvents,
+  setLoading as setNewsLoading,
+  setError as setNewsError,
+} from "../store/slices/newsSlice";
+import axios from "axios";
+import toast from "react-hot-toast";
+import {
+  publications_Url,
+  practice_area_url,
+  news_and_events_Url,
+} from "../utils/config";
 
+interface Publication {
+  title: string;
+  description: string;
+  authors: string[];
+  link: string;
+  published_on: string;
+}
 
-
-const dummyPublications = [
-  {
-    practice_area: { _id: "1", name: "Corporate Law" },
-    published_on: new Date("2024-05-15"),
-    authors: ["John Doe", "Jane Smith"],
-    title: "Corporate Governance in 2024",
-    description: "An in-depth analysis of corporate governance trends and regulations.",
-    link: "https://example.com/publication/corporate-governance-2024"
-  },
-  {
-    practice_area: { _id: "2", name: "Real Estate" },
-    published_on: new Date("2023-11-10"),
-    authors: ["Emily Davis", "Michael Brown"],
-    title: "Real Estate Market Trends",
-    description: "Exploring the latest trends and legal challenges in the real estate sector.",
-    link: "https://example.com/publication/real-estate-trends-2023"
-  },
-  {
-    practice_area: { _id: "3", name: "Insolvency & Restructuring" },
-    published_on: new Date("2025-01-20"),
-    authors: ["Sarah Wilson", "David Lee"],
-    title: "Corporate Restructuring Strategies",
-    description: "Guidance on insolvency and restructuring best practices for corporates.",
-    link: "https://example.com/publication/corporate-restructuring-2025"
-  },
-  {
-    practice_area: { _id: "4", name: "Government Affairs" },
-    published_on: new Date("2024-08-05"),
-    authors: ["Laura Martinez", "Robert Johnson"],
-    title: "Navigating Public Policy & Regulations",
-    description: "Insights into government affairs and public policy compliance.",
-    link: "https://example.com/publication/government-affairs-2024"
-  },
-  {
-    practice_area: { _id: "1", name: "Corporate Law" },
-    published_on: new Date("2024-09-10"),
-    authors: ["Alice Brown"],
-    title: "Corporate Law Updates",
-    description: "Latest corporate law amendments and their impact.",
-    link: "https://example.com/publication/corporate-law-updates"
-  },
-  {
-    practice_area: { _id: "2", name: "Real Estate" },
-    published_on: new Date("2023-05-15"),
-    authors: ["Tom Green"],
-    title: "Property Law Simplified",
-    description: "Simplifying property law for investors and homeowners.",
-    link: "https://example.com/publication/property-law-simplified"
-  },
-];
-
-const news_and_events_data = [
-  {
-    category: "News",
-    description:
-      "High Court issues landmark judgment on corporate governance reforms.",
-    date: "2025-07-15",
-  },
-  {
-    category: "Event",
-    description:
-      "Annual Legal Awareness Workshop scheduled for September 2025.",
-    date: "2025-09-05",
-  },
-  {
-    category: "News",
-    description: "New bill proposed to strengthen cybersecurity laws in India.",
-    date: "2025-06-28",
-  },
-  {
-    category: "Event",
-    description: "International Conference on Arbitration to be held in New Delhi.",
-    date: "2025-10-12",
-  },
-  {
-    category: "News",
-    description:
-      "Supreme Court expands interpretation of environmental protection laws.",
-    date: "2025-05-20",
-  },
-];
 
 export default function HomeClient() {
   const router = useRouter();
+  const dispatch = useDispatch();
+  const [showDisclaimer, setShowDisclaimer] = useState(false);
+
+  const { publications, loading: pubLoading } = useSelector(
+    (state: RootState) => state.publication
+  );
+  const { newsEvents, loading: newsLoading } = useSelector(
+    (state: RootState) => state.news
+  );
+
+  // Fetch Publications
+  useEffect(() => {
+    const fetchPublications = async () => {
+      try {
+        dispatch(setPublicationsLoading(true));
+
+        const { data } = await axios.get(publications_Url);
+        const formatted: Publication[] = data.map((pub: Publication) => ({
+          ...pub,
+          published_on: pub.published_on,
+    
+        }));
+
+        const uniqueYears: string[] = Array.from(
+          new Set(
+            formatted.map((pub: Publication) =>
+              new Date(pub.published_on).getFullYear().toString()
+            )
+          )
+        );
+
+        const res = await axios.get<{ name: string }[]>(practice_area_url);
+        const areasFromApi = res.data.map((area) => area.name);
+
+        dispatch(
+          setPublications({
+            publications: formatted,
+            practiceAreas: ["All", ...areasFromApi],
+            years: ["All", ...uniqueYears],
+          })
+        );
+      } catch (e) {
+        console.log("This is the error: ",e)
+        dispatch(setPublicationsError("Internal server error"));
+        toast.error("Internal server error");
+      } finally {
+        dispatch(setPublicationsLoading(false));
+      }
+    };
+
+    if (publications.length === 0) fetchPublications();
+  });
+
+  // Fetch News & Events
+  useEffect(() => {
+    const fetchNews = async () => {
+      try {
+        dispatch(setNewsLoading(true));
+        const { data } = await axios.get(news_and_events_Url);
+        dispatch(setNewsEvents(data));
+      } catch (e) {
+        console.log("This is the error for news fetching : ",e)
+        dispatch(setNewsError("Failed to fetch news & events"));
+        toast.error("Failed to fetch news & events");
+      } finally {
+        dispatch(setNewsLoading(false));
+      }
+    };
+
+    if (newsEvents.length === 0) fetchNews();
+  });
+
+  const handleAgree = () => {
+    localStorage.setItem("disclaimerAgreed", "true");
+    setShowDisclaimer(false);
+  };
+
+  useEffect(() => {
+    const agreed = localStorage.getItem("disclaimerAgreed");
+    if (!agreed) setShowDisclaimer(true);
+  });
+
+  // Show only latest 6 publications
+  const latestPublications = publications.slice(0, 6);
+
   return (
     <div className="w-full">
+
+{showDisclaimer && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg shadow-lg p-6 w-11/12 max-w-xl relative">
+            <h3 className="text-xl font-bold mb-4">Disclaimer</h3>
+            <p className="text-gray-700 mb-6 text-sm md:text-base">
+              The Bar Council of India prohibits Lawyers and Law Firms from solicitation. 
+              The content on this website is available for informational purposes only and should not be construed as advertisement, solicitation, legal advice, invitation, inducement or contract of any sort whatsoever. 
+              In case of requirement, the user is encouraged to seek independent legal consultation.
+              <br /><br />
+              The website contains links to external resources solely for enhancing user experience. 
+              We therefore are not liable for any consequences arising out of any action taken by the user based on information on the website.
+            </p>
+            <button
+              onClick={handleAgree}
+              className="absolute bottom-4 right-4 bg-purple-900 text-white px-4 py-2 rounded hover:bg-purple-800 transition"
+            >
+              Agree
+            </button>
+          </div>
+        </div>
+      )}
       {/* Hero Section */}
       <section className="hero-section relative w-full">
         <Swiper
@@ -131,7 +182,9 @@ export default function HomeClient() {
         </Swiper>
       </section>
 
-      {/* Latest Publications Heading */}
+      
+
+      {/* Latest Publications Section */}
       <div className="flex gap-1 px-6 py-10">
         <p className="text-black text-4xl sm:text-5xl md:text-7xl font-bold">
           Latest{" "}
@@ -141,62 +194,73 @@ export default function HomeClient() {
         </span>
       </div>
 
-      {/* Button */}
       <div className="w-full md:py-10 px-6">
-      <button
-        onClick={() => router.push("/publications")}
-        className="relative md:w-4/12 lg:w-4/12 hover:cursor-pointer text-xl sm:text-2xl px-3 lg:text-4xl rounded-full py-3 md:py-4 overflow-hidden group border-2 border-transparent hover:border-purple-900 transition-all duration-300"
-      >
-        <span className="absolute inset-0 bg-purple-900 transition-all duration-300"></span>
-        <span className="absolute inset-0 bg-white -translate-x-full group-hover:translate-x-0 transition-transform duration-300 ease-in-out"></span>
-        <span className="relative z-10 text-white group-hover:text-purple-900 transition-colors duration-300">
-          See all publications
-        </span>
-      </button>
-    </div>
+           <button
+          onClick={() => router.push("/publications")}
+          className="relative md:w-4/12 lg:w-4/12 hover:cursor-pointer text-xl sm:text-2xl px-3 lg:text-4xl rounded-full py-3 md:py-4 overflow-hidden group border-2 border-transparent hover:border-purple-900 transition-all duration-300"
+        >
+          <span className="absolute inset-0 bg-purple-900 transition-all duration-300"></span>
+          <span className="absolute inset-0 bg-white -translate-x-full group-hover:translate-x-0 transition-transform duration-300 ease-in-out"></span>
+          <span className="relative z-10 text-white group-hover:text-purple-900 transition-colors duration-300">
+            See all publications
+          </span>
+        </button>
+      </div>
+
       {/* Publications Slider */}
       <div className="publications-highlights w-full px-6 py-10">
-        <Swiper
-          spaceBetween={30}
-          centeredSlides={true}
-          autoplay={{
-            delay: 2500,
-            disableOnInteraction: false,
-          }}
-          modules={[Autoplay]}
-          className="mySwiper"
-          breakpoints={{
-            320: { slidesPerView: 1 },
-            640: { slidesPerView: 2 },
-            1024: { slidesPerView: 3 },
-            1440: { slidesPerView: 4 },
-          }}
-        >
-          {dummyPublications.map((pub, index) => (
-            <SwiperSlide
-            key={index}
-            className="bg-white h-[300px] min-h-[300px] max-h-[300px] rounded-xl shadow-lg p-6 flex flex-col justify-between border-purple-900 hover:cursor-pointer border-2"
+        {pubLoading ? (
+          <div className="col-span-full flex justify-center items-center py-20">
+            <div className="w-12 h-12 border-4 border-purple-950 border-t-transparent rounded-full animate-spin"></div>
+          </div>
+        ) : (
+          <Swiper
+            spaceBetween={30}
+            centeredSlides={true}
+            autoplay={{
+              delay: 2500,
+              disableOnInteraction: false,
+            }}
+            modules={[Autoplay]}
+            className="mySwiper"
+            breakpoints={{
+              320: { slidesPerView: 1 },
+              640: { slidesPerView: 2 },
+              1024: { slidesPerView: 3 },
+              1440: { slidesPerView: 4 },
+            }}
           >
-            <div className="p-4">
-              <h3 className="text-xl font-bold mb-2 text-purple-950">{pub.title}</h3>
-              <p className="text-sm mb-3 line-clamp-3 text-gray-700">{pub.description}</p>
-              <div className="flex justify-between text-xs opacity-80 text-gray-600">
-                <span>{pub.authors.join(", ")}</span>
-                <span>{pub.published_on.toISOString().split("T")[0]}</span>
-              </div>
-              <a
-                href={pub.link}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-blue-600 underline text-xs mt-2 block"
+            {latestPublications.map((pub, index) => (
+              <SwiperSlide
+                key={index}
+                className="bg-white h-[300px] min-h-[300px] max-h-[300px] rounded-xl shadow-lg p-6 flex flex-col justify-between border-purple-900 hover:cursor-pointer border-2"
               >
-                Read More
-              </a>
-            </div>
-          </SwiperSlide>
-          
-          ))}
-        </Swiper>
+                <div className="p-4">
+                  <h3 className="text-xl font-bold mb-2 text-purple-950">
+                    {pub.title}
+                  </h3>
+                  <p className="text-sm mb-3 line-clamp-3 text-gray-700">
+                    {pub.description}
+                  </p>
+                  <div className="flex justify-between text-xs opacity-80 text-gray-600">
+                    <span>{pub.authors?.join(", ")}</span>
+                    <span>
+                      {new Date(pub.published_on).toISOString().split("T")[0]}
+                    </span>
+                  </div>
+                  <a
+                    href={pub.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-blue-600 underline text-xs mt-2 block"
+                  >
+                    Read More
+                  </a>
+                </div>
+              </SwiperSlide>
+            ))}
+          </Swiper>
+        )}
       </div>
 
       {/* Latest News & Events Section */}
@@ -211,7 +275,12 @@ export default function HomeClient() {
 
       {/* News & Events Slider */}
       <section className="latest-news-and-events w-full px-6 py-10">
-        <Swiper
+        {newsLoading ? (
+          <div className="col-span-full flex justify-center items-center py-20">
+            <div className="w-12 h-12 border-4 border-purple-950 border-t-transparent rounded-full animate-spin"></div>
+          </div>
+        ) : (
+          <Swiper
           spaceBetween={30}
           centeredSlides={true}
           autoplay={{ delay: 2500, disableOnInteraction: false }}
@@ -223,30 +292,36 @@ export default function HomeClient() {
             1440: { slidesPerView: 4 },
           }}
         >
-          {news_and_events_data.map((item, index) => (
+          {newsEvents.map((item, index) => (
             <SwiperSlide
               key={index}
-              className="bg-white h-[300px] min-h-[300px] max-h-[300px] rounded-xl shadow-lg p-6 flex flex-col justify-between border-purple-900 hover:cursor-pointer border-2"
+              className="bg-white h-[300px] min-h-[300px] max-h-[300px] rounded-xl shadow-lg p-6 flex flex-col justify-between border-purple-900 hover:cursor-pointer border-2 space-y-3"
             >
               <span
                 className={`px-3 py-1 text-sm font-semibold rounded-full w-fit ${
-                  item.category === "News"
+                  item.category === "news"
                     ? "bg-purple-900 text-white"
                     : "bg-white border-2 border-purple-900 text-purple-900"
                 }`}
               >
                 {item.category}
               </span>
-              <p className="text-gray-700 text-sm line-clamp-3">
-                {item.description}
+              <p className="text-gray-700  text-sm line-clamp-3">
+                {item.title}
               </p>
               <span className="text-xs text-gray-500">
-                {new Intl.DateTimeFormat("en-GB", { year: "numeric", month: "short", day: "numeric" }).format(new Date(item.date))}
+                {new Intl.DateTimeFormat("en-GB", {
+                  year: "numeric",
+                  month: "short",
+                  day: "numeric",
+                }).format(new Date(item.date))}
               </span>
             </SwiperSlide>
           ))}
         </Swiper>
+        )}
       </section>
     </div>
   );
 }
+

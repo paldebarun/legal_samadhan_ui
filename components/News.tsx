@@ -3,41 +3,46 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import axios from "axios";
-import {news_and_events_Url} from '../utils/config'
-
-interface NewsEvent {
-  _id: string;
-  title: string;
-  category: string;
-  date: string;
-  linkedin_url: string;
-  createdAt: string;
-  updatedAt: string;
-  __v: number;
-}
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "../store/store";
+import { news_and_events_Url } from "../utils/config";
+import {
+  setNewsEvents,
+  setLoading,
+  setError,
+} from "../store/slices/newsSlice";
 
 const News: React.FC = () => {
-  const [newsEvents, setNewsEvents] = useState<NewsEvent[]>([]);
+  const dispatch = useDispatch();
+  const { newsEvents, loading } = useSelector(
+    (state: RootState) => state.news
+  );
+
   const [currentPage, setCurrentPage] = useState(1);
-  const [loading, setLoading] = useState(true); // loader state
   const itemsPerPage = 6;
 
   useEffect(() => {
     const fetchNewsEvents = async () => {
       try {
-        setLoading(true);
-        console.log("this is the api url : ",news_and_events_Url)
+        dispatch(setLoading(true));
         const res = await axios.get(news_and_events_Url);
-        setNewsEvents(res.data);
+        dispatch(setNewsEvents(res.data));
       } catch (err) {
         console.error("Error fetching news & events:", err);
+        dispatch(setError("Failed to fetch news & events"));
       } finally {
-        setLoading(false);
+        dispatch(setLoading(false));
       }
     };
-
-    fetchNewsEvents();
-  }, []);
+  
+    if (newsEvents.length === 0) {
+      console.log("calling the api for News");
+      fetchNewsEvents();
+    } else {
+      console.log("Not calling the api for News");
+    }
+  });
+  
 
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
@@ -50,7 +55,8 @@ const News: React.FC = () => {
       <section
         className="hero-section relative w-full flex items-center justify-center h-[300px] md:h-[400px] lg:h-[500px]"
         style={{
-          backgroundImage: "url('/news/813f228a-caf0-4b7a-a4ad-42b2b371a1bf.jpeg')",
+          backgroundImage:
+            "url('/news/813f228a-caf0-4b7a-a4ad-42b2b371a1bf.jpeg')",
           backgroundSize: "cover",
           backgroundPosition: "center",
         }}
@@ -64,14 +70,16 @@ const News: React.FC = () => {
       {/* Heading */}
       <div className="w-full flex flex-col sm:flex-row gap-1 py-6 px-6">
         <span className="text-4xl md:text-6xl lg:text-8xl font-bold">News</span>
-        <p className="text-4xl md:text-6xl lg:text-8xl font-bold text-purple-950">& Events</p>
+        <p className="text-4xl md:text-6xl lg:text-8xl font-bold text-purple-950">
+          & Events
+        </p>
       </div>
 
       {/* Loader */}
       {loading ? (
         <div className="col-span-full flex justify-center items-center py-20">
-        <div className="w-12 h-12 border-4 border-purple-950 border-t-transparent rounded-full animate-spin"></div>
-      </div>
+          <div className="w-12 h-12 border-4 border-purple-950 border-t-transparent rounded-full animate-spin"></div>
+        </div>
       ) : (
         <>
           {/* News/Event Listing */}
@@ -92,7 +100,11 @@ const News: React.FC = () => {
                 >
                   {item.category}
                 </span>
-                <p className="text-gray-700 text-sm line-clamp-3">{item.title.length > 200 ? item.title.slice(0, 200) + "..." : item.title}</p>
+                <p className="text-gray-700 text-sm line-clamp-3">
+                  {item.title.length > 200
+                    ? item.title.slice(0, 200) + "..."
+                    : item.title}
+                </p>
                 <span className="text-xs text-gray-500">
                   {new Intl.DateTimeFormat("en-GB", {
                     year: "numeric",
