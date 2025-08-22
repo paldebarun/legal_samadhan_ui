@@ -6,11 +6,11 @@ const practice_areas_data = [
     {
       heading: "CRIMINAL MATTERS (DISTRICT AND SESSION COURT GURGAON)",
       points: [
-        "Handling criminal complaints, investigations, and defense representation.",
-        "Advising on bailable and non-bailable offenses.",
-        "Representation in criminal trials and appeals in District and Session Courts.",
-        "Drafting legal notices, petitions, and writs pertaining to criminal matters.",
-        "Assisting clients with negotiation and settlement where applicable.",
+        "Offenses against women and child (kidnapping, Rape, stalking, domestic violence, dowry etc.",
+        "Protection of child from sexual offenses (POCSO).",
+        "Cyber crime.",
+        "Narcotic drugs and psychotrophic substances (NDPS).",
+        "Assault on person.",
       ],
     },
     {

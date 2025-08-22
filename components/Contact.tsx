@@ -8,6 +8,7 @@ import "swiper/css";
 import "swiper/css/effect-cards";
 import toast from "react-hot-toast";
 import axios from "axios"
+import { messages_url } from "@/utils/config";
 
 const cards_slider = [
   {
@@ -64,7 +65,7 @@ const handleSubmit = async () => {
   };
 
   try {
-    const res = await axios.post("http://localhost:5500/api/messages", payload, {
+    const res = await axios.post(messages_url, payload, {
       headers: { "Content-Type": "application/json" },
     });
 

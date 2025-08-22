@@ -3,6 +3,9 @@
 import React, { useState, useEffect } from "react";
 import { RiArrowDownSLine } from "react-icons/ri";
 import axios from "axios";
+import toast from "react-hot-toast";
+import {publications_Url} from '../utils/config'
+import {practice_area_url} from '../utils/config'
 
 const Publication: React.FC = () => {
   const [practiceOpen, setPracticeOpen] = useState(false);
@@ -21,7 +24,7 @@ const Publication: React.FC = () => {
         setLoading(true); // start loader
 
         // Fetch publications
-        const { data } = await axios.get("http://localhost:5500/api/publications");
+        const { data } = await axios.get(publications_Url);
         const formatted = data.map((pub: any) => ({
           ...pub,
           published_on: new Date(pub.published_on),
@@ -35,13 +38,14 @@ const Publication: React.FC = () => {
         setYears(["All", ...uniqueYears]);
 
         // Fetch practice areas
-        const res = await axios.get("http://localhost:5500/api/practice_area");
+        const res = await axios.get(practice_area_url);
         const areasFromApi = res.data.map((area: any) => area.name);
         setPracticeAreas(["All", ...areasFromApi]);
       } catch (e) {
+        toast.error("Internal server error")
         console.error("Error fetching data", e);
       } finally {
-        setLoading(false); // stop loader
+        setLoading(false); 
       }
     };
 

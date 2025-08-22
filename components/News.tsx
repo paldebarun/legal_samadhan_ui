@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import axios from "axios";
+import {news_and_events_Url} from '../utils/config'
 
 interface NewsEvent {
   _id: string;
@@ -25,7 +26,8 @@ const News: React.FC = () => {
     const fetchNewsEvents = async () => {
       try {
         setLoading(true);
-        const res = await axios.get("http://localhost:5500/api/news-events");
+        console.log("this is the api url : ",news_and_events_Url)
+        const res = await axios.get(news_and_events_Url);
         setNewsEvents(res.data);
       } catch (err) {
         console.error("Error fetching news & events:", err);
@@ -90,7 +92,7 @@ const News: React.FC = () => {
                 >
                   {item.category}
                 </span>
-                <p className="text-gray-700 text-sm line-clamp-3">{item.title}</p>
+                <p className="text-gray-700 text-sm line-clamp-3">{item.title.length > 200 ? item.title.slice(0, 200) + "..." : item.title}</p>
                 <span className="text-xs text-gray-500">
                   {new Intl.DateTimeFormat("en-GB", {
                     year: "numeric",
