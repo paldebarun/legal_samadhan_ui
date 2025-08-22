@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import Head from "next/head";
+
 
 const preloadImages = [
   "/nehru.jpeg",
@@ -10,11 +10,11 @@ const preloadImages = [
 export default function ContactLayout({ children }: { children: ReactNode }) {
   return (
     <>
-      <Head>
+      <head>
         {preloadImages.map((src, idx) => (
           <link key={idx} rel="preload" as="image" href={src} />
         ))}
-      </Head>
+      </head>
       <main>{children}</main>
     </>
   );

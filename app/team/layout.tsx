@@ -1,6 +1,6 @@
 // app/team/layout.tsx
 import type { ReactNode } from "react";
-import Head from "next/head";
+
 
 export default function TeamLayout({ children }: { children: ReactNode }) {
   const teamImages = [
@@ -11,11 +11,11 @@ export default function TeamLayout({ children }: { children: ReactNode }) {
 
   return (
     <>
-      <Head>
+      <head>
         {teamImages.map((img, i) => (
           <link key={i} rel="preload" as="image" href={img} />
         ))}
-      </Head>
+      </head>
       <main>{children}</main>
     </>
   );

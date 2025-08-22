@@ -1,6 +1,6 @@
 
 import type { ReactNode } from "react";
-import Head from "next/head";
+
 
 
 const preloadImages = [
@@ -27,11 +27,11 @@ const preloadImages = [
 export default function AboutLayout({ children }: { children: ReactNode }) {
   return (
     <>
-      <Head>
+      <head>
         {preloadImages.map((src, idx) => (
           <link key={idx} rel="preload" as="image" href={src} />
         ))}
-      </Head>
+      </head>
       <main>{children}</main>
     </>
   );

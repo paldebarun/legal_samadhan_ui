@@ -1,4 +1,3 @@
-import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar"; 
@@ -15,10 +14,11 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export const metadata: Metadata = {
-  title: "My App | LawProj",
-  description: "A Next.js SEO-friendly app migrated from Vite.",
-};
+const preloaded_images = [
+  "/site_logo.jpg",
+  "/home/_.jpeg",
+  "/home/c211e859-c8a5-465b-b892-aeb8989199db.jpeg",
+];
 
 export default function RootLayout({
   children,
@@ -28,33 +28,17 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-      <link rel="icon" href="/site_logo.jpg" />
-        <link
-          rel="preload"
-          as="image"
-          href="/home/_.jpeg"
-        />
-        <link
-          rel="preload"
-          as="image"
-          href="/home/c211e859-c8a5-465b-b892-aeb8989199db.jpeg"
-        />
-
-
-        <link
-          rel="preload"
-          as="image"
-          href="/cards.jpeg"
-        />
+        {preloaded_images.map((src, idx) => (
+          <link key={idx} rel="preload" as="image" href={src} />
+        ))}
+        <link rel="icon" href="/site_logo.jpg" />
       </head>
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-      
+
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <Navbar />
         <Toaster position="top-center" reverseOrder={false} />
         <main>{children}</main>
-        <Footer/>
+        <Footer />
       </body>
     </html>
   );
