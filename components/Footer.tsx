@@ -1,5 +1,4 @@
 import { FaLinkedin } from "react-icons/fa";
-import { FaInstagramSquare } from "react-icons/fa";
 
 const offices = [
   {
