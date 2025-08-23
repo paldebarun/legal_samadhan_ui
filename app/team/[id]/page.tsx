@@ -12,7 +12,7 @@ import toast from "react-hot-toast";
 import { FaPhone } from "react-icons/fa";
 import { IoMdMail } from "react-icons/io";
 import { FaLocationPin } from "react-icons/fa6";
-
+import { FaLinkedin } from "react-icons/fa6";
 
 
 const TeamMemberPage: React.FC = () => {
@@ -85,8 +85,8 @@ const TeamMemberPage: React.FC = () => {
 
       <div className="w-full md:w-8/12 px-2 md:px-10 py-3 md:py-10 space-y-6">
         
-      <h1 className="text-3xl sm:text-5xl lg:text-8xl font-bold text-white">{member.designation}</h1>
-      <p className="text-2xl sm:text-4xl lg:text-8xl  text-white">{member.name}</p>
+      <h1 className="text-3xl sm:text-5xl lg:text-7xl font-bold text-white">{member.designation}</h1>
+      <p className="text-2xl sm:text-4xl lg:text-6xl  text-white">{member.name}</p>
 
       <div className="flex items-center gap-3 text-md lg:text-xl">
      <FaPhone className="text-white"/>
@@ -128,14 +128,20 @@ const TeamMemberPage: React.FC = () => {
     ))}
   </ul>
 </div>
-
+  
+<div className="flex gap-3 items-center text-white text-md lg:text-xl">
+  <FaLinkedin/>
+  <a href={member.linkedin} className=" hover:underline">
+  Linkdin
+</a>
+</div>
 
        </div>
       
       <img
         src={member.image_url}
         alt={member.name}
-        className="w-7/12 md:w-5/12 mx-auto hidden md:inline py-3"
+        className=" md:w-[300px] lg:w-[400px] mx-auto hidden md:inline px-2 py-3"
       />
 
 </section>
