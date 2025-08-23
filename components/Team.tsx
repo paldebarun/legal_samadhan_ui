@@ -1,85 +1,28 @@
 "use client";
 
-import { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { RiArrowDownSLine } from "react-icons/ri";
 import { IoIosArrowRoundForward } from "react-icons/io";
+import { teams_url} from "@/utils/config";
+import axios from "axios";
+import { TeamMember } from "../store/slices/teamSlice";
+import { useSelector, useDispatch } from "react-redux";
+import { RootState } from "../store/store";
+import { setTeam, setLoading, setError } from "../store/slices/teamSlice";
+import toast from "react-hot-toast";
+import { useRouter } from "next/navigation";
 
-const team_data = [
-  {
-    image: "https://aquilaw.com/images/admin/lawyers/horizontal/1679553470.png",
-    name: "John Doe",
-    designation: "Senior Partner",
-    description:
-      "Expert in corporate and commercial litigation with 20+ years of experience.",
-  },
-  {
-    image: "https://aquilaw.com/images/admin/lawyers/horizontal/1679553470.png",
-    name: "Jane Smith",
-    designation: "Associate Partner",
-    description:
-      "Specializes in real estate and property law advisory for corporate clients.",
-  },
-  {
-    image: "https://aquilaw.com/images/admin/lawyers/horizontal/1679553470.png",
-    name: "Robert Johnson",
-    designation: "Legal Advisor",
-    description:
-      "Handles government affairs and public policy matters with great expertise.",
-  },
-  {
-    image: "https://aquilaw.com/images/admin/lawyers/horizontal/1679553470.png",
-    name: "Emily Davis",
-    designation: "Associate",
-    description:
-      "Focuses on insolvency and restructuring cases for corporate clients.",
-  },
-  {
-    image: "https://aquilaw.com/images/admin/lawyers/horizontal/1679553470.png",
-    name: "Michael Brown",
-    designation: "Senior Counsel",
-    description:
-      "Experienced in corporate M&A, financing, and commercial dispute resolution.",
-  },
-  {
-    image: "https://aquilaw.com/images/admin/lawyers/horizontal/1679553470.png",
-    name: "Sarah Wilson",
-    designation: "Associate Partner",
-    description:
-      "Advises clients on real estate transactions, leasing, and joint development agreements.",
-  },
-  {
-    image: "https://aquilaw.com/images/admin/lawyers/horizontal/1679553470.png",
-    name: "David Lee",
-    designation: "Legal Consultant",
-    description:
-      "Provides counsel on corporate governance, compliance, and litigation strategies.",
-  },
-  {
-    image: "https://aquilaw.com/images/admin/lawyers/horizontal/1679553470.png",
-    name: "Laura Martinez",
-    designation: "Senior Associate",
-    description:
-      "Specialist in insolvency, restructuring, and bankruptcy advisory services.",
-  },
-];
+interface ApiResponse{
+  success:boolean,
+  teamMembers:TeamMember[]
+}
 
-const practiceAreas = [
-  "Corporate Law",
-  "Real Estate",
-  "Insolvency & Restructuring",
-  "Government Affairs",
-];
 
-const designations = [
-  "Senior Partner",
-  "Associate Partner",
-  "Legal Advisor",
-  "Senior Associate",
-];
+const Team: React.FC = () => {
+  const dispatch = useDispatch();
 
-const locations = ["New York", "Los Angeles", "Chicago", "Houston"];
+  const router=useRouter();
 
-const Team = () => {
   const [practiceOpen, setPracticeOpen] = useState(false);
   const [designationOpen, setDesignationOpen] = useState(false);
   const [locationOpen, setLocationOpen] = useState(false);
@@ -88,6 +31,125 @@ const Team = () => {
   const [selectedDesignation, setSelectedDesignation] = useState("Designation");
   const [selectedLocation, setSelectedLocation] = useState("Location");
 
+  const [practiceAreas, setPracticeAreas] = useState<string[]>([]);
+  const [designations, setDesignations] = useState<string[]>([]);
+  const [locations, setLocations] = useState<string[]>([]);
+
+  const [filteredTeam, setFilteredTeam] = useState<TeamMember[]>([]);
+
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const { team, loading, error } = useSelector(
+    (state: RootState) => state.team
+  );
+  
+  useEffect(() => {
+    let updatedTeam = [...team];
+  
+    if (selectedPractice !== "Practice Areas") {
+      updatedTeam = updatedTeam.filter(member =>
+        member.expertise.some(ex => ex.name === selectedPractice)
+      );
+    }
+  
+    if (selectedDesignation !== "Designation") {
+      updatedTeam = updatedTeam.filter(member =>
+        member.designation === selectedDesignation
+      );
+    }
+  
+    if (selectedLocation !== "Location") {
+      updatedTeam = updatedTeam.filter(member =>
+        member.location.includes(selectedLocation)
+      );
+    }
+  
+    if (searchQuery.trim() !== "") {
+      updatedTeam = updatedTeam.filter(member =>
+        member.name.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+    }
+  
+    setFilteredTeam(updatedTeam);
+  }, [team, selectedPractice, selectedDesignation, selectedLocation, searchQuery]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        dispatch(setLoading(true));
+  
+        const { data } = await axios.get<ApiResponse>(teams_url);
+
+        
+  
+        const uniquePracticeAreas = Array.from(
+          new Set(
+            data.teamMembers
+              .map((m: TeamMember) => {
+                console.log("This is the expertise: ", m.expertise);
+                return m.expertise.map((ex) => ex.name); 
+              })
+              .flat()
+          )
+        );
+        console.log("These are the unique practice areas : ",uniquePracticeAreas)
+        setPracticeAreas(uniquePracticeAreas);
+        
+  
+        const uniqueDesignations:string[] = Array.from(
+          new Set(data.teamMembers.map((m:TeamMember) => m.designation))
+        );
+        setDesignations(uniqueDesignations);
+  
+        const uniqueLocations:string[] = Array.from(
+          new Set(data.teamMembers.flatMap((m:TeamMember) => m.location))
+        );
+        setLocations(uniqueLocations);
+  
+        dispatch(setTeam(data.teamMembers));
+
+        console.log("This is team data in api call : ",team)
+      } catch (e) {
+        dispatch(setError("Internal server error"));
+        toast.error("Internal server error");
+        console.error("Error fetching data", e);
+      } finally {
+        dispatch(setLoading(false));
+      }
+    };
+  
+    if (team.length === 0) {
+      console.log("calling the api for team");
+      fetchData();
+    } 
+    else {
+     console.log("This is team data : ",team)
+
+     const uniquePracticeAreas = Array.from(
+      new Set(team.map((m: TeamMember) => {
+            console.log("This is the expertise: ", m.expertise);
+            return m.expertise.map((ex) => ex.name); 
+          })
+          .flat()
+      )
+    );
+    console.log("These are the unique practice areas : ",uniquePracticeAreas)
+    setPracticeAreas(uniquePracticeAreas);
+
+      const uniqueDesignations = Array.from(
+        new Set(team.map((m:TeamMember) => m.designation))
+      );
+      setDesignations(uniqueDesignations);
+  
+      const uniqueLocations = Array.from(
+        new Set(team.flatMap((m:TeamMember) => m.location))
+      );
+      setLocations(uniqueLocations);
+  
+      console.log("Not calling the team api");
+    }
+  }, [team, dispatch]); 
+  
   return (
     <div className="w-full">
       {/* Hero Section */}
@@ -95,7 +157,7 @@ const Team = () => {
         className="hero-section relative w-full flex items-center justify-center h-[300px] md:h-[400px] lg:h-[500px]"
         style={{
           backgroundImage:
-            "url('https://aquilaw.com/front/assets/img/team/team-banner.jpg')",
+            "url('/team/ead3f1b8-e56b-48c8-903e-ca36c969a7c9.jpeg')",
           backgroundSize: "cover",
           backgroundPosition: "center",
           backgroundRepeat: "no-repeat",
@@ -127,6 +189,8 @@ const Team = () => {
           type="text"
           placeholder="Search by name"
           className="w-full border px-4 py-3 rounded-full focus:outline-none"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
         />
 
         {/* Practice Areas Dropdown */}
@@ -142,18 +206,21 @@ const Team = () => {
           </button>
           {practiceOpen && (
             <ul className="absolute z-10 w-full bg-white border mt-1 rounded-md shadow-md">
-              {practiceAreas.map((area, i) => (
-                <li
-                  key={i}
-                  className="px-4 py-2 hover:bg-purple-100 cursor-pointer"
-                  onClick={() => {
-                    setSelectedPractice(area);
-                    setPracticeOpen(false);
-                  }}
-                >
-                  {area}
-                </li>
-              ))}
+              {/* You might want to replace these with data from API later */}
+              {practiceAreas.map(
+                (area, i) => (
+                  <li
+                    key={i}
+                    className="px-4 py-2 hover:bg-purple-100 cursor-pointer"
+                    onClick={() => {
+                      setSelectedPractice(area);
+                      setPracticeOpen(false);
+                    }}
+                  >
+                    {area}
+                  </li>
+                )
+              )}
             </ul>
           )}
         </div>
@@ -222,38 +289,48 @@ const Team = () => {
                 md:grid-cols-2 
                 lg:grid-cols-3 p-6"
       >
-        {team_data.map((member, index) => (
-          <div
-            key={index}
-            className="w-full h-[500px] hover:cursor-pointer relative group overflow-hidden rounded-lg"
-            style={{
-              backgroundImage: `url('${member.image}')`,
-              backgroundSize: "cover",
-              backgroundPosition: "center",
-              backgroundRepeat: "no-repeat",
-            }}
-          >
-            {/* Overlay that expands height on hover */}
-            <div className="detail-cover absolute top-0 left-0 w-full h-0 group-hover:h-full bg-purple-900/60 transition-[height] duration-[500ms] ease-in-out flex items-end">
-              <div className="p-4">
-                <p className="text-white leading-normal relative">
-                  {member.description}
+        {loading ? (
+          <div className="col-span-full flex justify-center items-center py-20">
+          <div className="w-12 h-12 border-4 border-purple-950 border-t-transparent rounded-full animate-spin"></div>
+        </div>
+        ) : error ? (
+          <p className="text-red-500">{error}</p>
+        ) : (
+          filteredTeam.map((member) => (
+            <div
+              key={member._id}
+              className="md:w-[350px] w-[250px] h-[350px] md:h-[450px] hover:cursor-pointer relative group overflow-hidden rounded-lg"
+              style={{
+                backgroundImage: `url('${member.image_url}')`,
+                backgroundSize: "cover",
+                backgroundPosition: "center",
+                backgroundRepeat: "no-repeat",
+              }}
+            >
+              {/* Overlay */}
+              <div className="detail-cover absolute top-0 left-0 w-full h-0 group-hover:h-full bg-purple-900/60 transition-[height] duration-[500ms] ease-in-out flex items-end"
+              onClick={() => router.push(`/team/${member._id}`)}
+              >
+                <div className="p-4">
+                  <p className="text-white text-xs md:text-sm lg:text-md leading-normal relative">
+                  {member.bio.length > 300 ? member.bio.slice(0, 300) + "..." : member.bio}
+                  </p>
+                  <IoIosArrowRoundForward  className="text-white text-4xl mt-2" />
+                </div>
+              </div>
+
+              {/* Name & Designation */}
+              <div className="absolute top-4 left-4">
+                <p className="text-black relative leading-normal font-bold text-sm sm:text-md lg:text-xl group-hover:text-white">
+                  {member.name}
                 </p>
-                <IoIosArrowRoundForward className="text-white mt-2" />
+                <p className="text-slate-500 relative leading-normal group-hover:text-white">
+                  {member.designation}
+                </p>
               </div>
             </div>
-
-            {/* Name & Designation */}
-            <div className="absolute top-4 left-4">
-              <p className="text-black relative leading-normal font-bold text-xl group-hover:text-white">
-                {member.name}
-              </p>
-              <p className="text-slate-500 relative leading-normal group-hover:text-white">
-                {member.designation}
-              </p>
-            </div>
-          </div>
-        ))}
+          ))
+        )}
       </div>
     </div>
   );

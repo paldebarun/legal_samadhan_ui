@@ -7,12 +7,12 @@ export default function Disclaimer() {
   const [show, setShow] = useState(false);
 
   useEffect(() => {
-    const agreed = localStorage.getItem("disclaimerAgreed");
+    const agreed = sessionStorage.getItem("disclaimerAgreed");
     if (!agreed) setShow(true);
   }, []);
 
   const handleAgree = () => {
-    localStorage.setItem("disclaimerAgreed", "true");
+    sessionStorage.setItem("disclaimerAgreed", "true");
     setShow(false);
   };
 

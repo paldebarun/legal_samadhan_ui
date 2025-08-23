@@ -2,11 +2,13 @@
 import { configureStore } from "@reduxjs/toolkit";
 import publicationReducer from "./slices/publicationSlice";
 import newsReducer from './slices/newsSlice';
+import teamReducer from './slices/teamSlice'
 
 export const store = configureStore({
   reducer: {
     publication: publicationReducer,
-    news:newsReducer
+    news:newsReducer,
+    team:teamReducer
   },
 });
 

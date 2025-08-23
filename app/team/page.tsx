@@ -15,7 +15,7 @@ export const metadata: Metadata = {
       "Meet our expert team of lawyers providing professional legal services across multiple domains.",
     images: [
       {
-        url: "https://aquilaw.com/front/assets/img/team/team-banner.jpg",
+        url: "/team/ead3f1b8-e56b-48c8-903e-ca36c969a7c9.jpeg",
         width: 1200,
         height: 630,
         alt: "Law Firm Expert Legal Team",

@@ -4,9 +4,7 @@ import Head from "next/head";
 
 export default function TeamLayout({ children }: { children: ReactNode }) {
   const teamImages = [
-    "/images/team1.jpg",
-    "/images/team2.jpg",
-    "/images/team3.jpg",
+    "/team/ead3f1b8-e56b-48c8-903e-ca36c969a7c9.jpeg"
   ];
 
   return (
