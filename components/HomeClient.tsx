@@ -28,6 +28,9 @@ import {
   practice_area_url,
   news_and_events_Url,
 } from "../utils/config";
+import Heading from './Heading'
+
+
 
 interface Publication {
   title: string;
@@ -157,14 +160,7 @@ export default function HomeClient() {
       
 
       {/* Latest Publications Section */}
-      <div className="flex gap-1 px-6 py-10">
-        <p className="text-black text-4xl sm:text-5xl md:text-7xl font-bold">
-          Latest{" "}
-        </p>
-        <span className="text-purple-900 text-4xl sm:text-5xl md:text-7xl font-bold">
-          Publications
-        </span>
-      </div>
+      <Heading first_text="Latest " second_text="Publications" />
 
       <div className="w-full md:py-10 px-6">
            <button
@@ -236,14 +232,8 @@ export default function HomeClient() {
       </div>
 
       {/* Latest News & Events Section */}
-      <div className="sm:flex-row flex-col flex gap-1 px-6 py-10">
-        <p className="text-black text-4xl sm:text-5xl md:text-7xl font-bold">
-          Latest{" "}
-        </p>
-        <span className="text-purple-900 text-4xl sm:text-5xl md:text-7xl font-bold">
-          News & Events
-        </span>
-      </div>
+
+      <Heading first_text="Latest" second_text="News & Events" />
 
       {/* News & Events Slider */}
       <section className="latest-news-and-events w-full px-6 py-10">

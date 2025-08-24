@@ -3,12 +3,12 @@ import TeamDetail from "@/components/TeamDetail";
 
 const siteUrl = process.env.SITE_URL || "https://legal-samadhan-ui-qy2u.vercel.app";
 
-export function generateMetadata({
+export async function generateMetadata({
   params,
 }: {
   params: { id: string };
-}): Metadata {
-  const id = params.id;
+}): Promise<Metadata>  {
+  const {id} = await params;
 
   return {
     title: "Team Details | Legal Samadhan - Meet Our Experts",

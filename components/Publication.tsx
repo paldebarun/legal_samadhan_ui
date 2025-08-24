@@ -12,6 +12,8 @@ import {
   setLoading,
   setError,
 } from "../store/slices/publicationSlice";
+import BannerComponent from "./Banner";
+import Heading from "./Heading";
 
 
 interface PublicationType {
@@ -117,30 +119,12 @@ const Publication: React.FC = () => {
   return (
     <div className="w-full">
       {/* Hero Section */}
-      <section
-        className="hero-section relative w-full flex items-center justify-center h-[300px] md:h-[400px] lg:h-[500px]"
-        style={{
-          backgroundImage:
-            "url('/publications/35db0edc-6cea-4aa8-80b8-361e33d2e618.jpeg')",
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-        }}
-      >
-        <div className="absolute inset-0 bg-black opacity-60"></div>
-        <p className="relative text-white text-center text-3xl md:text-6xl leading-normal font-bold w-7/12">
-          Delivering Legal Excellence with Integrity and Insight
-        </p>
-      </section>
+
+      <BannerComponent image="/publications/35db0edc-6cea-4aa8-80b8-361e33d2e618.jpeg" text="Delivering Legal Excellence with Integrity and Insight" />
 
       {/* Heading */}
-      <div className="w-full flex flex-col sm:flex-row gap-1 py-6 px-6">
-        <span className="text-4xl md:text-6xl lg:text-8xl font-bold">
-          Our Briefings
-        </span>
-        <p className="text-4xl md:text-6xl lg:text-8xl font-bold text-purple-950">
-          & Insights
-        </p>
-      </div>
+
+      <Heading first_text="Our Briefings" second_text="& Insights" />
 
       {/* Filters */}
       <div className="filter-areas px-3 py-6 w-full grid gap-2 sm:grid-cols-1 lg:grid-cols-3 lg:grid-rows-1">

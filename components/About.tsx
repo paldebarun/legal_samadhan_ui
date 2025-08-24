@@ -1,11 +1,6 @@
-"use client";
 
 import Image from "next/image";
-import { Swiper, SwiperSlide } from "swiper/react";
-import { EffectCube, Pagination } from "swiper/modules";
-import "swiper/css";
-import "swiper/css/effect-cube";
-import "swiper/css/pagination";
+import CubeSwiper from "./CubeSwiper";
 
 const images = ["/about/f379a178-10db-4d41-9055-05cef71089f4.jpeg", "/about/d4e108a8-ded6-4f94-85a1-6274f81b4c18.jpeg", "/about/Trust, transparency & modern contract….jpeg", "/about/Illigal Law.jpeg"];
 
@@ -72,31 +67,8 @@ export default function About() {
       <section className="about-section px-6 py-10 max-w-screen mx-auto">
         <div className="flex flex-col lg:flex-row gap-6 lg:gap-1 items-center py-10">
           {/* Swiper for team images */}
-          <Swiper
-            effect={"cube"}
-            grabCursor
-            cubeEffect={{
-              shadow: true,
-              slideShadows: true,
-              shadowOffset: 20,
-              shadowScale: 0.94,
-            }}
-            modules={[EffectCube, Pagination]}
-            className="mySwiper w-[300px] sm:w-lg mx-auto lg:w-4/12 h-[300px]"
-          >
-            {images.map((src, idx) => (
-              <SwiperSlide key={idx} className="w-full h-full">
-                <Image
-                  src={src}
-                  alt={`about us image ${idx + 1}`}
-                  width={500}
-                  height={500}
-                  className="w-full h-full object-cover"
-                />
-              </SwiperSlide>
-            ))}
-          </Swiper>
-
+    
+          <CubeSwiper images={images}/>
           {/* About Text */}
           <div className="lg:w-6/12 md:px-6 flex flex-col items-center gap-6">
   <p className="text-2xl font-semibold text-center">
@@ -106,8 +78,6 @@ export default function About() {
     We partner with businesses, institutions, and individuals to deliver innovative, strategic, and practical legal advice. Our team combines deep expertise with a commitment to integrity, ensuring every client receives trusted guidance and impactful results.
   </p>
 </div>
-
-
 
 
         </div>

@@ -11,6 +11,8 @@ import { RootState } from "../store/store";
 import { setTeam, setLoading, setError } from "../store/slices/teamSlice";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
+import BannerComponent from "./Banner";
+import Heading from "./Heading";
 
 interface ApiResponse{
   success:boolean,
@@ -153,29 +155,12 @@ const Team: React.FC = () => {
   return (
     <div className="w-full">
       {/* Hero Section */}
-      <section
-        className="hero-section relative w-full flex items-center justify-center h-[300px] md:h-[400px] lg:h-[500px]"
-        style={{
-          backgroundImage:
-            "url('/team/ead3f1b8-e56b-48c8-903e-ca36c969a7c9.jpeg')",
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-          backgroundRepeat: "no-repeat",
-        }}
-      >
-        <div className="absolute inset-0 bg-black opacity-40"></div>
-        <p className="relative text-white text-center text-3xl md:text-6xl leading-normal font-bold w-7/12">
-          Delivering Extraordinary Values Always
-        </p>
-      </section>
+
+      <BannerComponent image="/team/ead3f1b8-e56b-48c8-903e-ca36c969a7c9.jpeg" text="Delivering Extraordinary Values Always" />
 
       {/* Section Heading */}
-      <div className="w-full flex flex-col sm:flex-row gap-1 py-6 px-6">
-        <span className="text-4xl md:text-6xl lg:text-8xl font-bold">Our</span>
-        <p className="text-4xl md:text-6xl lg:text-8xl font-bold text-purple-950">
-          Lawyers
-        </p>
-      </div>
+     
+      <Heading first_text="Our" second_text="Lawyers" />
 
       {/* Filter Area with Dropdowns */}
       <div

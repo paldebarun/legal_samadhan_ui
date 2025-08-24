@@ -11,6 +11,8 @@ import {
   setLoading,
   setError,
 } from "../store/slices/newsSlice";
+import BannerComponent from "./Banner";
+import Heading from "./Heading";
 
 const News: React.FC = () => {
   const dispatch = useDispatch();
@@ -52,28 +54,13 @@ const News: React.FC = () => {
   return (
     <div className="w-full">
       {/* Hero Section */}
-      <section
-        className="hero-section relative w-full flex items-center justify-center h-[300px] md:h-[400px] lg:h-[500px]"
-        style={{
-          backgroundImage:
-            "url('/news/813f228a-caf0-4b7a-a4ad-42b2b371a1bf.jpeg')",
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-        }}
-      >
-        <div className="absolute inset-0 bg-black opacity-60"></div>
-        <p className="relative text-white text-center text-3xl md:text-6xl leading-normal font-bold w-7/12">
-          Stay Updated with Our Latest News & Events
-        </p>
-      </section>
-
+      <BannerComponent 
+       image='/news/813f228a-caf0-4b7a-a4ad-42b2b371a1bf.jpeg' 
+       text="Stay Updated with Our Latest News & Events" 
+      />
       {/* Heading */}
-      <div className="w-full flex flex-col sm:flex-row gap-1 py-6 px-6">
-        <span className="text-4xl md:text-6xl lg:text-8xl font-bold">News</span>
-        <p className="text-4xl md:text-6xl lg:text-8xl font-bold text-purple-950">
-          & Events
-        </p>
-      </div>
+
+      <Heading first_text="News" second_text="& Events" />
 
       {/* Loader */}
       {loading ? (

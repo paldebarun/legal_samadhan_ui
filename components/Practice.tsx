@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import BannerComponent from "./Banner";
+import Heading from "./Heading";
 
 const practice_areas_data = [
     {
@@ -106,27 +108,12 @@ export default function PracticeComponent() {
   return (
     <div className="w-full">
       {/* Hero Section */}
-      <section
-        className="hero-section relative w-full flex items-center justify-center h-[300px] md:h-[400px] lg:h-[500px]"
-        style={{
-          backgroundImage: "url('/practice/43c2ff63-d807-4338-b54c-6923ae9ac384.jpeg')",
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-        }}
-      >
-        <div className="absolute inset-0 bg-black opacity-60"></div>
-        <p className="relative text-white text-center text-3xl md:text-6xl leading-normal font-bold w-7/12">
-        Delivering Legal Excellence with Integrity and Insight
-        </p>
-      </section>
+
+      <BannerComponent image="/practice/43c2ff63-d807-4338-b54c-6923ae9ac384.jpeg" text="Delivering Legal Excellence with Integrity and Insight" />
 
       {/* Section Heading */}
-      <div className="w-full flex flex-col sm:flex-row gap-1 py-6 px-6">
-        <span className="text-4xl md:text-6xl lg:text-8xl font-bold">Core</span>
-        <p className="text-4xl md:text-6xl lg:text-8xl font-bold text-purple-950">
-          Practice Areas
-        </p>
-      </div>
+
+      <Heading first_text="Core"  second_text="Practice Areas"/>
 
       {/* Practice Areas Accordion */}
       <section className="practice_areas_list md:py-10 px-4 w-full md:w-11/12 mx-auto">
