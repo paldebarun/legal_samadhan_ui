@@ -5,17 +5,19 @@ const siteUrl = process.env.SITE_URL || "https://legalsamadhan.co.in";
 
 export const metadata: Metadata = {
   title: "Our Lawyers | Expert Legal Team - Legal Samadhan",
-  description:
-    "Meet our experienced legal team specializing in corporate law, real estate, insolvency, and government affairs. Trusted advisors for your legal needs.",
-  keywords:
-    "Lawyers, Legal Team, Corporate Law, Real Estate Law, Insolvency, Government Affairs",
+  description:"Meet our experienced legal team specializing in corporate law, real estate, insolvency, and government affairs. Trusted advisors for your legal needs.",
+  keywords:"Lawyers, Legal Team, Corporate Law, Real Estate Law, Insolvency, Government Affairs",
   alternates: {
       canonical: `${siteUrl}/team`,
     },
+    icons: {
+      icon: "/site_logo.jpg",       
+      shortcut: "/site_logo.jpg",       
+      apple: "/site_logo.jpg",   
+    },
   openGraph: {
     title: "Our Lawyers - Legal Samadhan",
-    description:
-      "Meet our expert team of lawyers providing professional legal services across multiple domains.",
+    description:"Meet our expert team of lawyers providing professional legal services across multiple domains.",
     images: [
       {
         url: `${siteUrl}/team/ead3f1b8-e56b-48c8-903e-ca36c969a7c9.jpeg`,
@@ -30,8 +32,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Our Lawyers - Legal Samadhan",
-    description:
-      "Meet our expert team of lawyers providing professional legal services across multiple domains.",
+    description:"Meet our expert team of lawyers providing professional legal services across multiple domains.",
     images: [`${siteUrl}/team/ead3f1b8-e56b-48c8-903e-ca36c969a7c9.jpeg`],
     
   },

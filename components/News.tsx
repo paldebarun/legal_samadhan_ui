@@ -10,9 +10,16 @@ import {
   setNewsEvents,
   setLoading,
   setError,
+  NewsEvent
 } from "../store/slices/newsSlice";
 import BannerComponent from "./Banner";
 import Heading from "./Heading";
+
+
+export interface NewsEventAPIResponse{
+  success:boolean,
+  newsEvents:NewsEvent[]
+}
 
 const News: React.FC = () => {
   const dispatch = useDispatch();
@@ -23,29 +30,28 @@ const News: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 6;
 
+  // -------------------- Fetch News Events --------------------
   useEffect(() => {
-    const fetchNewsEvents = async () => {
-      try {
-        dispatch(setLoading(true));
-        const res = await axios.get(news_and_events_Url);
-        dispatch(setNewsEvents(res.data));
-      } catch (err) {
-        console.error("Error fetching news & events:", err);
-        dispatch(setError("Failed to fetch news & events"));
-      } finally {
-        dispatch(setLoading(false));
-      }
-    };
+    if (!newsEvents || newsEvents.length === 0) {
+      const fetchNewsEvents = async () => {
+        try {
+          dispatch(setLoading(true));
+          const {data} = await axios.get<NewsEventAPIResponse>(news_and_events_Url);
+          dispatch(setNewsEvents(data.newsEvents));
+        } catch (err) {
+          console.error("Error fetching news & events:", err);
+          dispatch(setError("Failed to fetch news & events"));
+        } finally {
+          dispatch(setLoading(false));
+        }
+      };
   
-    if (newsEvents.length === 0) {
-      console.log("calling the api for News");
       fetchNewsEvents();
-    } else {
-      console.log("Not calling the api for News");
     }
-  });
+  }, [dispatch, newsEvents]);
   
 
+  // -------------------- Pagination --------------------
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentItems = newsEvents.slice(indexOfFirstItem, indexOfLastItem);
@@ -54,12 +60,12 @@ const News: React.FC = () => {
   return (
     <div className="w-full">
       {/* Hero Section */}
-      <BannerComponent 
-       image='/news/813f228a-caf0-4b7a-a4ad-42b2b371a1bf.jpeg' 
-       text="Stay Updated with Our Latest News & Events" 
+      <BannerComponent
+        image="/news/813f228a-caf0-4b7a-a4ad-42b2b371a1bf.jpeg"
+        text="Stay Updated with Our Latest News & Events"
       />
-      {/* Heading */}
 
+      {/* Heading */}
       <Heading first_text="News" second_text="& Events" />
 
       {/* Loader */}

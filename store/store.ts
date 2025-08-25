@@ -3,15 +3,17 @@ import { configureStore } from "@reduxjs/toolkit";
 import publicationReducer from "./slices/publicationSlice";
 import newsReducer from './slices/newsSlice';
 import teamReducer from './slices/teamSlice'
+import jobReducer from './slices/jobSlice'
 
 export const store = configureStore({
   reducer: {
     publication: publicationReducer,
     news:newsReducer,
-    team:teamReducer
+    team:teamReducer,
+    job:jobReducer
   },
 });
 
-// Types for TypeScript
+
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;

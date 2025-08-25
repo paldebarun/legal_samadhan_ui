@@ -1,9 +1,7 @@
-// app/page.tsx
 import type { Metadata } from "next";
 import HomeClient from "@/components/HomeClient";
 
 const siteUrl = process.env.SITE_URL || "https://legalsamadhan.co.in";
-
 
 const homeImages = [
   "/site_logo.jpg",
@@ -12,34 +10,42 @@ const homeImages = [
 ];
 
 export const metadata: Metadata = {
-  title: "Home | Legal Samadhan - Trusted Legal Experts",
+  title: "Legal Samadhan | Trusted Law Firm & Expert Legal Services",
   description:
-    "Explore Legal Samadhan's expertise in justice, legal awareness, rights defense, and more. Stay updated with our latest publications, news, and events.",
+    "Legal Samadhan delivers trusted legal expertise across corporate, commercial, real estate, and dispute resolution domains. Stay updated with our latest publications, news, and events.",
   keywords:
-    "Legal Samadhan, law firm, justice, legal awareness, rights defense, legal news, publications, events, expert attorneys, legal services",
+    "Legal Samadhan, law firm, legal experts, corporate law, commercial law, real estate law, dispute resolution, legal services, publications, news, events",
   alternates: {
     canonical: `${siteUrl}/`,
   },
+  icons: {
+    icon: "/site_logo.jpg",
+    shortcut: "/site_logo.jpg",
+    apple: "/site_logo.jpg",
+  },
   openGraph: {
-    title: "Legal Samadhan - Upholding Justice for All",
+    title: "Legal Samadhan | Trusted Law Firm & Expert Legal Services",
     description:
-      "We are committed to safeguarding justice, empowering through legal awareness, and defending rights for all.",
+      "We provide expert legal solutions across corporate, commercial, real estate, and dispute resolution sectors. Explore our publications, news, and events.",
     type: "website",
+    url: siteUrl,
     images: homeImages.map((path) => ({
       url: `${siteUrl}${path}`,
       width: 1200,
       height: 630,
-      alt: "Legal Samadhan Home Image",
+      alt: "Legal Samadhan Home Banner",
     })),
   },
   twitter: {
     card: "summary_large_image",
-    title: "Legal Samadhan - Trusted Legal Experts",
+    title: "Legal Samadhan | Trusted Law Firm & Expert Legal Services",
     description:
-      "Discover Legal Samadhan's commitment to justice and legal excellence. Learn about our publications, news, events, and expert legal services.",
+      "Expert legal services in corporate, commercial, real estate, and dispute resolution. Discover publications, news, and updates from Legal Samadhan.",
     images: homeImages.map((path) => `${siteUrl}${path}`),
+    
   },
 };
+
 
 
 export default function Home() {

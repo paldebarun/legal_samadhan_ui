@@ -1,44 +1,42 @@
 import type { Metadata } from "next";
 import CareerComponent from "@/components/Careers";
 
-
-const contactImages = [
+const careerImages = [
   "/site_logo.jpg",
-  "/br_ambedkar_image.jpeg",
-  "/nehru.jpeg",
-  "/vr_krishna_iyer.jpeg",
+  "/careers/832a2286-53fc-4af3-8471-5ff18f1b76af.jpeg",
 ];
 
 const siteUrl = process.env.SITE_URL || "https://legal-samadhan-ui-qy2u.vercel.app";
 
 export const metadata: Metadata = {
-  title: "Contact Us | Legal Samadhan - Expert Legal Advice",
-  description:
-    "Get in touch with Legal Samadhan's expert legal team. Ask queries or seek advice on corporate law, real estate, insolvency, or any legal matters. Our lawyers are here to guide you with clarity and precision.",
-  keywords:
-    "Legal Samadhan, Contact, Legal Queries, Lawyers, Corporate Law, Real Estate Law, Insolvency Advice, Legal Consultation, Legal Support, Law Firm",
+  title: "Careers | Legal Samadhan - Join Our Team",
+  description:"Explore exciting career opportunities at Legal Samadhan. Join our team of legal and management professionals, or apply for internships. Build your future with us.",
+  keywords:"Legal Samadhan Careers, Legal Jobs, Management Jobs, Law Firm Careers, Internships, Legal Professionals, Management Professionals, Work with Legal Samadhan",
   alternates: {
-    canonical: `${siteUrl}/contacts`,
+    canonical: `${siteUrl}/careers`,
+  },
+  icons: {
+    icon: "/site_logo.jpg",        
+    shortcut: "/site_logo.jpg",       
+    apple: "/site_logo.jpg",          
   },
   openGraph: {
-    title: "Contact Legal Samadhan - Expert Legal Team",
-    description:
-      "Reach out to Legal Samadhan's experienced legal team for consultations, advice, or legal queries across corporate, real estate, insolvency, and other practice areas.",
-    url: `${siteUrl}/contacts`,
+    title: "Careers at Legal Samadhan - Join Our Team",
+    description:"Discover career opportunities at Legal Samadhan. Apply for roles in legal, management, or internship categories and grow with us.",
+    url: `${siteUrl}/careers`,
     type: "website",
-    images: contactImages.map((path) => ({
+    images: careerImages.map((path) => ({
       url: `${siteUrl}${path}`,
       width: 1200,
       height: 630,
-      alt: "Legal Samadhan Contact Image",
+      alt: "Legal Samadhan Careers",
     })),
   },
   twitter: {
     card: "summary_large_image",
-    title: "Contact Legal Samadhan - Expert Legal Advice",
-    description:
-      "Connect with Legal Samadhan's legal experts for queries or advice on corporate law, real estate, insolvency, and other legal matters.",
-    images: contactImages.map((path) => `${siteUrl}${path}`),
+    title: "Careers at Legal Samadhan - Join Our Team",
+    description:"Explore jobs and internships at Legal Samadhan. Work with legal experts and management professionals in a leading law firm.",
+    images: careerImages.map((path) => `${siteUrl}${path}`),
   },
 };
 

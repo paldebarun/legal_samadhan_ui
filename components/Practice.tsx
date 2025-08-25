@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import BannerComponent from "./Banner";
 import Heading from "./Heading";
 
@@ -98,58 +98,57 @@ const practice_areas_data = [
   ];
   
 
-export default function PracticeComponent() {
-  const [openIndex, setOpenIndex] = useState<number | null>(null);
-
-  const toggleDrawer = (index: number) => {
-    setOpenIndex(openIndex === index ? null : index);
-  };
-
-  return (
-    <div className="w-full">
-      {/* Hero Section */}
-
-      <BannerComponent image="/practice/43c2ff63-d807-4338-b54c-6923ae9ac384.jpeg" text="Delivering Legal Excellence with Integrity and Insight" />
-
-      {/* Section Heading */}
-
-      <Heading first_text="Core"  second_text="Practice Areas"/>
-
-      {/* Practice Areas Accordion */}
-      <section className="practice_areas_list md:py-10 px-4 w-full md:w-11/12 mx-auto">
-        {practice_areas_data.map((area, index) => (
-          <div
-            key={index}
-            className="border-b border-gray-300 py-4 flex flex-col"
-          >
-            <div className="flex justify-between items-center">
-              <h3 className="text-sm sm:text-lg md:text-2xl font-semibold text-gray-600">
-                {area.heading}
-              </h3>
-              <button
-                onClick={() => toggleDrawer(index)}
-                className="text-purple-950 text-2xl hover:cursor-pointer font-bold focus:outline-none"
+  export default function PracticeComponent() {
+    const [openIndex, setOpenIndex] = useState<number | null>(null);
+  
+    // Use useCallback to avoid function recreation on each render
+    const toggleDrawer = useCallback((index: number) => {
+      setOpenIndex((prevIndex) => (prevIndex === index ? null : index));
+    }, []);
+  
+    return (
+      <div className="w-full">
+        {/* Hero Section */}
+        <BannerComponent
+          image="/practice/43c2ff63-d807-4338-b54c-6923ae9ac384.jpeg"
+          text="Delivering Legal Excellence with Integrity and Insight"
+        />
+  
+        {/* Section Heading */}
+        <Heading first_text="Core" second_text="Practice Areas" />
+  
+        {/* Practice Areas Accordion */}
+        <section className="practice_areas_list md:py-10 px-4 w-full md:w-11/12 mx-auto">
+          {practice_areas_data.map((area, index) => (
+            <div key={index} className="border-b border-gray-300 py-4 flex flex-col">
+              <div className="flex justify-between items-center">
+                <h3 className="text-sm sm:text-lg md:text-2xl font-semibold text-gray-600">
+                  {area.heading}
+                </h3>
+                <button
+                  onClick={() => toggleDrawer(index)}
+                  className="text-purple-950 text-2xl hover:cursor-pointer font-bold focus:outline-none"
+                >
+                  {openIndex === index ? "−" : "+"}
+                </button>
+              </div>
+  
+              <div
+                className={`transition-all duration-500 overflow-hidden ${
+                  openIndex === index ? "max-h-96 mt-3" : "max-h-0"
+                }`}
               >
-                {openIndex === index ? "−" : "+"}
-              </button>
+                <ul className="list-disc list-inside text-xs md:text-lg text-gray-600 space-y-2 pl-5">
+                  {area.points.map((point, i) => (
+                    <li key={i} className="marker:text-purple-950">
+                      {point}
+                    </li>
+                  ))}
+                </ul>
+              </div>
             </div>
-
-            <div
-              className={`transition-all duration-500 overflow-hidden ${
-                openIndex === index ? "max-h-96 mt-3" : "max-h-0"
-              }`}
-            >
-              <ul className="list-disc list-inside text-xs md:text-lg text-gray-600 space-y-2 pl-5">
-                {area.points.map((point, i) => (
-                  <li key={i} className="marker:text-purple-950">
-                    {point}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
-        ))}
-      </section>
-    </div>
-  );
-}
+          ))}
+        </section>
+      </div>
+    );
+  }

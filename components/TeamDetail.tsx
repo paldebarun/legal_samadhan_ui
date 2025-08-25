@@ -5,8 +5,7 @@ import { useParams } from "next/navigation";
 import axios from "axios";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "@/store/store";
-import { TeamMember } from "@/store/slices/teamSlice";
-import { setTeam, setLoading } from "@/store/slices/teamSlice";
+import { TeamMember, setTeam, setLoading } from "@/store/slices/teamSlice";
 import { teams_url } from "@/utils/config";
 import toast from "react-hot-toast";
 import { FaPhone } from "react-icons/fa";
@@ -17,7 +16,6 @@ import Image from "next/image";
 const TeamMemberPage: React.FC = () => {
   const params = useParams();
   const { id } = params;
-
   const dispatch = useDispatch();
   const { team } = useSelector((state: RootState) => state.team);
 
@@ -26,17 +24,16 @@ const TeamMemberPage: React.FC = () => {
 
   useEffect(() => {
     const fetchMember = async () => {
-      setLoadingLocal(true);
-
-      // Check in Redux state first
-      const foundMember = team.find((m: TeamMember) => m._id === id);
-      if (foundMember) {
-        setMember(foundMember);
+      // Check in Redux first
+      const existingMember = team.find(m => m._id === id);
+      if (existingMember) {
+        setMember(existingMember);
         setLoadingLocal(false);
         return;
       }
 
-      // If not found, fetch from API
+      // Fetch from API only if not found
+      setLoadingLocal(true);
       try {
         dispatch(setLoading(true));
         const { data } = await axios.get(`${teams_url}/${id}`);
@@ -44,7 +41,10 @@ const TeamMemberPage: React.FC = () => {
 
         if (apiMember) {
           setMember(apiMember);
-          dispatch(setTeam([...team, apiMember]));
+          // Only add if not already in Redux
+          if (!team.some(m => m._id === apiMember._id)) {
+            dispatch(setTeam([...team, apiMember]));
+          }
         } else {
           setMember(null);
         }
@@ -73,7 +73,7 @@ const TeamMemberPage: React.FC = () => {
   return (
     <div className="w-full">
       <section className="flex md:flex-row flex-col bg-purple-900">
-        {/* Image on small screens */}
+        {/* Image for small screens */}
         <div className="w-[300px] sm:w-5/12 mx-auto block md:hidden py-3">
           <Image
             src={member.image_url}
@@ -88,9 +88,7 @@ const TeamMemberPage: React.FC = () => {
           <h1 className="text-3xl sm:text-5xl lg:text-7xl font-bold text-white">
             {member.designation}
           </h1>
-          <p className="text-2xl sm:text-4xl lg:text-6xl text-white">
-            {member.name}
-          </p>
+          <p className="text-2xl sm:text-4xl lg:text-6xl text-white">{member.name}</p>
 
           {/* Phone */}
           <div className="flex items-center gap-3 text-md lg:text-xl">
@@ -119,17 +117,15 @@ const TeamMemberPage: React.FC = () => {
           <div className="flex gap-3 items-center text-white text-md lg:text-xl">
             <FaLocationPin />
             <ul className="gap-2 flex">
-              {member.location.map((location, index) => (
+              {member.location.map((loc, index) => (
                 <li className="flex gap-1" key={index}>
                   <a
-                    href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
-                      location
-                    )}`}
+                    href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(loc)}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-white hover:underline"
                   >
-                    {location}
+                    {loc}
                   </a>
                   {index !== member.location.length - 1 && <span>/</span>}
                 </li>
@@ -151,7 +147,7 @@ const TeamMemberPage: React.FC = () => {
           </div>
         </div>
 
-        {/* Image on medium+ screens */}
+        {/* Image for medium+ screens */}
         <div className="md:w-[300px] lg:w-[400px] mx-auto hidden md:block px-2 py-3">
           <Image
             src={member.image_url}
@@ -178,9 +174,7 @@ const TeamMemberPage: React.FC = () => {
         </div>
 
         <p className="text-2xl sm:text-3xl font-bold">Bio</p>
-        <p className="w-full text-slate-600 text-sm sm:text-lg text-left">
-          {member.bio}
-        </p>
+        <p className="w-full text-slate-600 text-sm sm:text-lg text-left">{member.bio}</p>
       </section>
     </div>
   );

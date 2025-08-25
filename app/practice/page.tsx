@@ -11,17 +11,19 @@ const siteUrl =
 
 export const metadata: Metadata = {
   title: "Practice Areas | Legal Samadhan - Expert Legal Services",
-  description:
-    "Explore Legal Samadhan's core practice areas including criminal matters, family law, real estate, contract management, commercial disputes, MSME law, NIA cases, property disputes, and more. Our expert legal team delivers tailored solutions with integrity and insight.",
-  keywords:
-    "Legal Samadhan, law firm, practice areas, criminal law, family law, real estate law, contract management, commercial disputes, MSME law, NIA, property disputes, expert attorneys, legal services",
+  description:"Explore Legal Samadhan's core practice areas including criminal matters, family law, real estate, contract management, commercial disputes, MSME law, NIA cases, property disputes, and more. Our expert legal team delivers tailored solutions with integrity and insight.",
+  keywords:"Legal Samadhan, law firm, practice areas, criminal law, family law, real estate law, contract management, commercial disputes, MSME law, NIA, property disputes, expert attorneys, legal services",
   alternates: {
     canonical: `${siteUrl}/practice`,
   },
+  icons: {
+    icon: "/site_logo.jpg",       
+    shortcut: "/site_logo.jpg",      
+    apple: "/site_logo.jpg",      
+  },
   openGraph: {
     title: "Legal Samadhan - Core Practice Areas",
-    description:
-      "Discover the comprehensive legal expertise of Legal Samadhan across multiple domains including corporate law, commercial disputes, real estate, insolvency, and more.",
+    description:"Discover the comprehensive legal expertise of Legal Samadhan across multiple domains including corporate law, commercial disputes, real estate, insolvency, and more.",
     url: `${siteUrl}/practice`,
     type: "website",
     images: practiceImages.map((path) => ({
@@ -34,8 +36,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Legal Samadhan - Core Practice Areas",
-    description:
-      "Explore Legal Samadhan's extensive legal services and practice areas. Our team provides professional, tailored solutions for corporate, commercial, and property law matters.",
+    description:"Explore Legal Samadhan's extensive legal services and practice areas. Our team provides professional, tailored solutions for corporate, commercial, and property law matters.",
     images: practiceImages.map((path) => `${siteUrl}${path}`),
   },
 };

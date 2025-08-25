@@ -2,6 +2,7 @@
 import Image from "next/image";
 import CubeSwiper from "./CubeSwiper";
 
+
 const images = ["/about/f379a178-10db-4d41-9055-05cef71089f4.jpeg", "/about/d4e108a8-ded6-4f94-85a1-6274f81b4c18.jpeg", "/about/Trust, transparency & modern contract….jpeg", "/about/Illigal Law.jpeg"];
 
 export const practiceAreas = [
@@ -63,6 +64,7 @@ export default function About() {
         </p>
       </section>
 
+     
       {/* About Section */}
       <section className="about-section px-6 py-10 max-w-screen mx-auto">
         <div className="flex flex-col lg:flex-row gap-6 lg:gap-1 items-center py-10">

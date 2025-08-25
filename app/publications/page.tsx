@@ -11,17 +11,19 @@ const siteUrl =
 
 export const metadata: Metadata = {
   title: "Publications | Legal Samadhan - Expert Legal Insights",
-  description:
-    "Stay updated with Legal Samadhan's latest publications across corporate law, real estate, insolvency, government affairs, and more. Explore in-depth analyses and expert insights from our experienced legal team.",
-  keywords:
-    "Legal Samadhan, legal publications, corporate law insights, real estate law, insolvency analysis, government affairs, law firm articles, expert legal advice, legal insights, professional legal writing",
+  description:"Stay updated with Legal Samadhan's latest publications across corporate law, real estate, insolvency, government affairs, and more. Explore in-depth analyses and expert insights from our experienced legal team.",
+  keywords:"Legal Samadhan, legal publications, corporate law insights, real estate law, insolvency analysis, government affairs, law firm articles, expert legal advice, legal insights, professional legal writing",
   alternates: {
     canonical: `${siteUrl}/publications`,
   },
+  icons: {
+    icon: "/site_logo.jpg",           
+    shortcut: "/site_logo.jpg",       
+    apple: "/site_logo.jpg",          
+  },
   openGraph: {
     title: "Legal Samadhan Publications - Expert Legal Insights",
-    description:
-      "Discover in-depth publications from Legal Samadhan's legal experts across multiple practice areas, providing authoritative insights, analyses, and updates in corporate, commercial, real estate, and government law.",
+    description:"Discover in-depth publications from Legal Samadhan's legal experts across multiple practice areas, providing authoritative insights, analyses, and updates in corporate, commercial, real estate, and government law.",
     url: `${siteUrl}/publications`,
     type: "website",
     images: publicationImages.map((path) => ({
@@ -34,8 +36,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Legal Samadhan Publications - Expert Legal Insights",
-    description:
-      "Explore Legal Samadhan's publications across corporate law, real estate, insolvency, and government affairs. Gain valuable legal insights from our experts.",
+    description:"Explore Legal Samadhan's publications across corporate law, real estate, insolvency, and government affairs. Gain valuable legal insights from our experts.",
     images: publicationImages.map((path) => `${siteUrl}${path}`),
   },
 };

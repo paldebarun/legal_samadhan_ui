@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useEffect  } from "react";
 import "swiper/css";
 import "swiper/css/effect-fade";
 import "swiper/css/navigation";
@@ -20,6 +20,7 @@ import {
   setNewsEvents,
   setLoading as setNewsLoading,
   setError as setNewsError,
+  
 } from "../store/slices/newsSlice";
 import axios from "axios";
 import toast from "react-hot-toast";
@@ -29,6 +30,8 @@ import {
   news_and_events_Url,
 } from "../utils/config";
 import Heading from './Heading'
+import { PublicationAPIResponse,PracticeAreaAPIResponse,PracticeArea } from "./Publication";
+import { NewsEventAPIResponse } from "./News";
 
 
 
@@ -59,8 +62,8 @@ export default function HomeClient() {
       try {
         dispatch(setPublicationsLoading(true));
 
-        const { data } = await axios.get(publications_Url);
-        const formatted: Publication[] = data.map((pub: Publication) => ({
+        const { data } = await axios.get<PublicationAPIResponse>(publications_Url);
+        const formatted: Publication[] = data.publications.map((pub: Publication) => ({
           ...pub,
           published_on: pub.published_on,
     
@@ -74,8 +77,8 @@ export default function HomeClient() {
           )
         );
 
-        const res = await axios.get<{ name: string }[]>(practice_area_url);
-        const areasFromApi = res.data.map((area) => area.name);
+        const res = await axios.get<PracticeAreaAPIResponse>(practice_area_url);
+        const areasFromApi = res.data.practiceAreas.map((area:PracticeArea) => area.name);
 
         dispatch(
           setPublications({
@@ -94,15 +97,15 @@ export default function HomeClient() {
     };
 
     if (publications.length === 0) fetchPublications();
-  });
+  }, [dispatch, publications.length]);
 
   // Fetch News & Events
   useEffect(() => {
     const fetchNews = async () => {
       try {
         dispatch(setNewsLoading(true));
-        const { data } = await axios.get(news_and_events_Url);
-        dispatch(setNewsEvents(data));
+        const { data } = await axios.get<NewsEventAPIResponse>(news_and_events_Url);
+        dispatch(setNewsEvents(data.newsEvents));
       } catch (e) {
         console.log("This is the error for news fetching : ",e)
         dispatch(setNewsError("Failed to fetch news & events"));
@@ -113,7 +116,7 @@ export default function HomeClient() {
     };
 
     if (newsEvents.length === 0) fetchNews();
-  });
+  }, [dispatch, newsEvents.length]);
 
   
 

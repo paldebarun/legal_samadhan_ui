@@ -12,17 +12,19 @@ export async function generateMetadata({
 
   return {
     title: "Team Details | Legal Samadhan - Meet Our Experts",
-    description:
-      "Learn more about the dedicated professionals at Legal Samadhan. Explore detailed profiles of our legal experts, their expertise, and contributions to justice.",
-    keywords:
-      "Legal Samadhan, legal team, attorneys, lawyers, legal experts, law firm team, meet our team, professional legal services, justice experts",
+    description:"Learn more about the dedicated professionals at Legal Samadhan. Explore detailed profiles of our legal experts, their expertise, and contributions to justice.",
+    keywords:"Legal Samadhan, legal team, attorneys, lawyers, legal experts, law firm team, meet our team, professional legal services, justice experts",
     alternates: {
       canonical: `${siteUrl}/team/${id}`,
     },
+    icons: {
+      icon: "/site_logo.jpg",       
+      shortcut: "/site_logo.jpg",     
+      apple: "/site_logo.jpg",    
+    },
     openGraph: {
       title: "Legal Samadhan Team - Trusted Legal Experts",
-      description:
-        "Meet the Legal Samadhan team. Discover the expertise, backgrounds, and roles of our professionals who are committed to delivering trusted legal services.",
+      description:"Meet the Legal Samadhan team. Discover the expertise, backgrounds, and roles of our professionals who are committed to delivering trusted legal services.",
       url: `${siteUrl}/team/${id}`,
       type: "profile",
       images: [
@@ -37,8 +39,7 @@ export async function generateMetadata({
     twitter: {
       card: "summary_large_image",
       title: "Legal Samadhan Team - Trusted Legal Experts",
-      description:
-        "Explore the profiles of Legal Samadhan's dedicated legal professionals and their expertise in justice and legal services.",
+      description:"Explore the profiles of Legal Samadhan's dedicated legal professionals and their expertise in justice and legal services.",
       images: [`${siteUrl}/site_logo.jpg`],
     },
   };
