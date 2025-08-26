@@ -32,6 +32,7 @@ import {
 import Heading from './Heading'
 import { PublicationAPIResponse,PracticeAreaAPIResponse,PracticeArea } from "./Publication";
 import { NewsEventAPIResponse } from "./News";
+import { Link } from "lucide-react";
 
 
 
@@ -262,6 +263,7 @@ export default function HomeClient() {
               key={index}
               className="bg-white h-[300px] min-h-[300px] max-h-[300px] rounded-xl shadow-lg p-6 flex flex-col justify-between border-purple-900 hover:cursor-pointer border-2 space-y-3"
             >
+              
               <span
                 className={`px-3 py-1 text-sm font-semibold rounded-full w-fit ${
                   item.category === "news"
@@ -281,6 +283,14 @@ export default function HomeClient() {
                   day: "numeric",
                 }).format(new Date(item.date))}
               </span>
+              <a
+                    href={item.linkedin_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-blue-600 underline text-xs mt-2 block"
+                  >
+                    Read More
+                  </a>
             </SwiperSlide>
           ))}
         </Swiper>
