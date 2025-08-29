@@ -15,6 +15,8 @@ import {
   setPublications,
   setLoading as setPublicationsLoading,
   setError as setPublicationsError,
+  Publication
+ 
 } from "../store/slices/publicationSlice";
 import {
   setNewsEvents,
@@ -26,23 +28,11 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import {
   publications_Url,
-  practice_area_url,
   news_and_events_Url,
 } from "../utils/config";
 import Heading from './Heading'
-import { PublicationAPIResponse,PracticeAreaAPIResponse,PracticeArea } from "./Publication";
+import { PublicationAPIResponse} from "./Publication";
 import { NewsEventAPIResponse } from "./News";
-import { Link } from "lucide-react";
-
-
-
-interface Publication {
-  title: string;
-  description: string;
-  authors: string[];
-  link: string;
-  published_on: string;
-}
 
 
 export default function HomeClient() {
@@ -67,7 +57,7 @@ export default function HomeClient() {
         const formatted: Publication[] = data.publications.map((pub: Publication) => ({
           ...pub,
           published_on: pub.published_on,
-    
+          practice_area: pub.practice_area || { name: "Unknown" },
         }));
 
         const uniqueYears: string[] = Array.from(
@@ -78,8 +68,10 @@ export default function HomeClient() {
           )
         );
 
-        const res = await axios.get<PracticeAreaAPIResponse>(practice_area_url);
-        const areasFromApi = res.data.practiceAreas.map((area:PracticeArea) => area.name);
+       
+        const areasFromApi = data.publications.map(
+          (publication: Publication) => publication.practice_area?.name
+        );
 
         dispatch(
           setPublications({

@@ -5,3 +5,5 @@ export const messages_url=`${process.env.NEXT_PUBLIC_API_BASE}/${process.env.NEX
 export const teams_url=`${process.env.NEXT_PUBLIC_API_BASE}/${process.env.NEXT_PUBLIC_TEAM_ENDPOINT}`;
 export const jobs_url=`${process.env.NEXT_PUBLIC_API_BASE}/${process.env.NEXT_PUBLIC_JOB_ENDPOINT}`;
 export const application_url=`${process.env.NEXT_PUBLIC_API_BASE}/${process.env.NEXT_PUBLIC_APPLICATION_ENDPOINT}`;
+export const login_url=`${process.env.NEXT_PUBLIC_API_BASE}/${process.env.NEXT_PUBLIC_LOGIN_ENDPOINT}`
+export const User_url=`${process.env.NEXT_PUBLIC_API_BASE}/${process.env.NEXT_PUBLIC_USER_ENDPOINT}`

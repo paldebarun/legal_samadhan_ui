@@ -2,11 +2,12 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 export interface Publication {
+  _id:string;
   title: string;
   description: string;
   authors: string[];
   link: string;
-  practice_area?: { name: string };
+  practice_area: { name: string, _id:string };
   published_on: string; 
 }
 

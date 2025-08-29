@@ -4,28 +4,19 @@ import React, { useState, useEffect } from "react";
 import { RiArrowDownSLine } from "react-icons/ri";
 import axios from "axios";
 import toast from "react-hot-toast";
-import { publications_Url, practice_area_url } from "../utils/config";
+import { publications_Url} from "../utils/config";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../store/store"; 
 import {
   setPublications,
   setLoading,
   setError,
-  
+  Publication as PublicationType
 } from "../store/slices/publicationSlice";
 import BannerComponent from "./Banner";
 import Heading from "./Heading";
 
 
-
-interface PublicationType {
-  title: string;
-  description: string;
-  authors: string[]; 
-  link: string;
-  published_on: string;
-  practice_area?: { name: string };
-}
 
 export interface PracticeArea {
   _id: string;
@@ -75,9 +66,11 @@ const Publication: React.FC = () => {
           new Set(data.publications.map((pub:PublicationType) => new Date(pub.published_on).getFullYear().toString()))
         );
 
-        const res = await axios.get<PracticeAreaAPIResponse>(practice_area_url);
-        const areasFromApi = res.data.practiceAreas.map((area:PracticeArea) => area.name);
-
+     
+        const areasFromApi = data.publications.map(
+          (publication: PublicationType) => publication.practice_area?.name
+        );
+        
         dispatch(
           setPublications({
             publications: data.publications,
