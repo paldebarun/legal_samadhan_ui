@@ -16,6 +16,7 @@ const pages = [
   { module: "Practice area", route: "/admin/PracticeArea" },
   { module: "Queries", route: "/admin/Queries" },
   { module: "Applications", route: "/admin/Application" },
+  { module: "Team", route: "/admin/Team" },
 ];
 
 export default function AdminLayout({ children }: { children: ReactNode }) {
