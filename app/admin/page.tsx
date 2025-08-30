@@ -141,61 +141,60 @@ export default function PublicationTablePage() {
       }
     }, [router]);
   
-   
+     
     // Fetch publications & practice areas
     useEffect(() => {
+      const fetchAllData = async () => {
+        const toastId = toast.loading("Loading data...");
     
-    // if (!isAuthorized) return; 
-
-    const fetchAllData = async () => {
-      const toastId = toast.loading("Loading data...");
-      try {
-        dispatch(setLoading(true));
-
-        const { data: pubData } = await axios.get<PublicationAPIResponse>(
-          publications_Url
-        );
-        const uniqueYears = Array.from(
-          new Set(
-            pubData.publications.map((pub: Publication) =>
-              new Date(pub.published_on).getFullYear().toString()
-            )
-          )
-        );
-        const areasFromApi = pubData.publications.map(
-          (publication: Publication) => publication.practice_area?.name
-        );
-        dispatch(
-          setPublications({
-            publications: pubData.publications,
-            practiceAreas: areasFromApi,
-            years: ["All", ...uniqueYears],
-          })
-        );
-
-        if (!practiceareas || practiceareas.length === 0) {
-          const { data: areaData } = await axios.get<PracticeAreaAPIResponse>(
-            practice_area_url
+        try {
+          dispatch(setLoading(true));
+    
+          const { data: pubData } = await axios.get<PublicationAPIResponse>(
+            publications_Url
           );
-          dispatch(setPracticeAreas(areaData.practiceAreas));
+    
+          const uniqueYears = Array.from(
+            new Set(
+              pubData.publications.map((pub: Publication) =>
+                new Date(pub.published_on).getFullYear().toString()
+              )
+            )
+          );
+    
+          const areasFromApi = pubData.publications.map(
+            (publication: Publication) => publication.practice_area?.name
+          );
+    
+          dispatch(
+            setPublications({
+              publications: pubData.publications,
+              practiceAreas: areasFromApi,
+              years: ["All", ...uniqueYears],
+            })
+          );
+    
+          if (practiceareas.length === 0) {
+            const { data: areaData } = await axios.get<PracticeAreaAPIResponse>(
+              practice_area_url
+            );
+            dispatch(setPracticeAreas(areaData.practiceAreas));
+          }
+        } catch (err) {
+          console.error("Error fetching data:", err);
+          dispatch(setError("Failed to fetch data"));
+          toast.error("Failed to fetch data");
+        } finally {
+          toast.dismiss(toastId);
+          dispatch(setLoading(false));
         }
-      } catch (err) {
-        console.error("Error fetching data:", err);
-        dispatch(setError("Failed to fetch data"));
-        toast.error("Failed to fetch data");
-      } finally {
-        toast.dismiss(toastId);
-        dispatch(setLoading(false));
+      };
+    
+      if (publications.length === 0 || practiceareas.length === 0) {
+        fetchAllData();
       }
-    };
-
-    if (
-      publications.length === 0 ||
-      (practiceareas && practiceareas.length === 0)
-    ) {
-      fetchAllData();
-    }
-  }, [dispatch, publications.length, practiceareas]);
+    }, [dispatch]);
+    
 
   // Add Publication
   const handleSubmit = async () => {

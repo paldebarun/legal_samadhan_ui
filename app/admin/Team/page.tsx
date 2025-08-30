@@ -608,6 +608,9 @@ export default function TeamPage() {
       <li>
         Ensure all team member details are accurate, as they will be displayed on the public site.
       </li>
+      <li>
+        Upload only <span className="font-semibold">.jpg</span>, <span className="font-semibold">.png</span> and <span className="font-semibold">.jpeg</span> only.
+      </li>
     </ul>
   </div>
 </div>

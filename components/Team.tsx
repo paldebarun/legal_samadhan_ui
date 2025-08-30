@@ -41,18 +41,20 @@ const Team: React.FC = () => {
   // Function to compute filtered team based on filters
   const getFilteredTeam = useCallback(() => {
     let filtered = [...team];
+
+    
   
-    if (selectedPractice !== "Practice Areas") {
+    if (selectedPractice !== "Practice Areas" && selectedPractice!="All") {
       filtered = filtered.filter(member =>
         member.expertise.some(ex => ex.name === selectedPractice)
       );
     }
   
-    if (selectedDesignation !== "Designation") {
+    if (selectedDesignation !== "Designation" && selectedDesignation!="All") {
       filtered = filtered.filter(member => member.designation === selectedDesignation);
     }
   
-    if (selectedLocation !== "Location") {
+    if (selectedLocation !== "Location" && selectedLocation!="All") {
       filtered = filtered.filter(member => member.location.includes(selectedLocation));
     }
   
@@ -139,9 +141,9 @@ const Team: React.FC = () => {
 
         {/* Dropdowns */}
         {[
-          { open: practiceOpen, setOpen: setPracticeOpen, selected: selectedPractice, setSelected: setSelectedPractice, options: practiceAreas },
-          { open: designationOpen, setOpen: setDesignationOpen, selected: selectedDesignation, setSelected: setSelectedDesignation, options: designations },
-          { open: locationOpen, setOpen: setLocationOpen, selected: selectedLocation, setSelected: setSelectedLocation, options: locations },
+          { open: practiceOpen, setOpen: setPracticeOpen, selected: selectedPractice, setSelected: setSelectedPractice, options: ["All", ...practiceAreas] },
+          { open: designationOpen, setOpen: setDesignationOpen, selected: selectedDesignation, setSelected: setSelectedDesignation, options:["All", ...designations] },
+          { open: locationOpen, setOpen: setLocationOpen, selected: selectedLocation, setSelected: setSelectedLocation, options: ["All", ...locations] },
         ].map((dropdown, idx) => (
           <div key={idx} className="relative">
             <button
@@ -172,7 +174,7 @@ const Team: React.FC = () => {
       </div>
 
       {/* Team Cards */}
-      <div className="team-details w-full grid gap-6 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 p-6">
+      <div className="team-details w-full grid gap-3 grid-cols-1 sm:grid-cols-2 place-items-center  md:grid-cols-3 lg:grid-cols-3 p-6">
         {loading ? (
           <div className="col-span-full flex justify-center items-center py-20">
             <div className="w-12 h-12 border-4 border-purple-950 border-t-transparent rounded-full animate-spin"></div>
@@ -183,7 +185,7 @@ const Team: React.FC = () => {
           filteredTeam.map(member => (
             <div
               key={member._id}
-              className="md:w-[350px] w-[250px] h-[350px] md:h-[450px] hover:cursor-pointer relative group overflow-hidden rounded-lg"
+              className="md:w-full w-[250px] h-[350px] md:h-[350px] lg:w-[250px] lg:h-[350px]  hover:cursor-pointer relative group overflow-hidden rounded-lg"
               style={{
                 backgroundImage: `url('${member.image_url}')`,
                 backgroundSize: "cover",
