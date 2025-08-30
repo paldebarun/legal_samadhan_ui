@@ -306,15 +306,25 @@ export default function NewsTablePage() {
 <div className="mt-10 p-6 bg-purple-50 border border-purple-200 rounded-lg">
   <h2 className="text-lg font-semibold mb-2 text-purple-900">Admin Instructions</h2>
   <ul className="list-disc list-inside text-gray-700 space-y-1">
-    <li>Use the &quot;Add +&quot; button to create a new News or Event item.</li>
+    <li>
+      Use the <span className="font-semibold text-green-600">&quot;Add +&quot;</span> button 
+      to create a new News or Event item.
+    </li>
     <li>Ensure that all required fields (Title, Category, Date) are filled before submitting.</li>
     <li>The &quot;Category&quot; should be correctly selected as either &quot;News&quot; or &quot;Events&quot;.</li>
     <li>The &quot;LinkedIn URL&quot; should point to the official page or source of the news/event (optional but recommended).</li>
     <li>After adding a new item, the table will automatically update with the latest entry.</li>
-    <li>Use the update button to modify existing entries. Ensure data is correct before submitting updates.</li>
-    <li>Use the delete button to remove entries that are outdated or incorrect.</li>
+    <li>
+      Use the <span className="font-semibold text-blue-600">&quot;Update&quot;</span> button 
+      to modify existing entries. Ensure data is correct before submitting updates.
+    </li>
+    <li>
+      Use the <span className="font-semibold text-red-600">&quot;Delete&quot;</span> button 
+      to remove entries that are outdated or incorrect.
+    </li>
   </ul>
 </div>
+
     </div>
   );
 }

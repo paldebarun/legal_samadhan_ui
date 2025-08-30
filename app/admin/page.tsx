@@ -538,30 +538,33 @@ export default function PublicationTablePage() {
 
       {/* Admin Instructions */}
       <div className="mt-10 p-6 bg-purple-50 border border-purple-200 rounded-lg">
-        <h2 className="text-lg font-semibold mb-2 text-purple-900">
-          Admin Instructions
-        </h2>
-        <ul className="list-disc list-inside text-gray-700 space-y-1">
-          <li>Use the &quot;Add +&quot; button to create a new publication.</li>
-          <li>
-            Ensure that all required fields (Title, Link, Practice Area,
-            Published On) are filled before submitting.
-          </li>
-          <li>Authors should be entered as a comma-separated list.</li>
-          <li>
-            The &quot;Link&quot; field should point to the official publication URL.
-          </li>
-          <li>You can view existing publications directly in the table.</li>
-          <li>
-            Use the update button to modify any publication. Ensure data is
-            correct before submitting updates.
-          </li>
-          <li>
-            Use the delete button to remove publications that are outdated or
-            incorrect.
-          </li>
-        </ul>
-      </div>
+  <h2 className="text-lg font-semibold mb-2 text-purple-900">
+    Admin Instructions
+  </h2>
+  <ul className="list-disc list-inside text-gray-700 space-y-1">
+    <li>
+      Use the <span className="font-semibold text-green-600">Add +</span> button to create a new publication.
+    </li>
+    <li>
+      Ensure that all required fields (Title, Link, Practice Area,
+      Published On) are filled before submitting.
+    </li>
+    <li>Authors should be entered as a comma-separated list.</li>
+    <li>
+      The <span className="font-semibold text-sky-600">Link</span> field should point to the official publication URL.
+    </li>
+    <li>You can view existing publications directly in the table.</li>
+    <li>
+      Use the <span className="font-semibold text-blue-600">Update</span> button to modify any publication. Ensure data is
+      correct before submitting updates.
+    </li>
+    <li>
+      Use the <span className="font-semibold text-red-600">Delete</span> button to remove publications that are outdated or
+      incorrect.
+    </li>
+  </ul>
+</div>
+
     </div>
   );
 }

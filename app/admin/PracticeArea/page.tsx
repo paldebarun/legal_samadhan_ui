@@ -233,16 +233,33 @@ export default function PracticeAreaTablePage() {
           }}
         />
   
-        <div className="mt-10 p-6 bg-purple-50 border border-purple-200 rounded-lg">
-          <h2 className="text-lg font-semibold mb-2 text-purple-900">Admin Instructions</h2>
-          <ul className="list-disc list-inside text-gray-700 space-y-1">
-            <li>Use the &quot;Add +&quot; button to create a new Practice Area.</li>
-            <li>Ensure that the Practice Area name is descriptive and unique.</li>
-            <li>After submission, the table will automatically update with the new entry.</li>
-            <li>Verify the name before adding to prevent duplicates or incorrect entries.</li>
-            <li>Use the table to view creation and update dates for reference.</li>
-          </ul>
-        </div>
+  <div className="mt-10 p-6 bg-purple-50 border border-purple-200 rounded-lg">
+  <h2 className="text-lg font-semibold mb-2 text-purple-900">Admin Instructions</h2>
+  <ul className="list-disc list-inside text-gray-700 space-y-1">
+    <li>
+      Use the <span className="text-green-600 font-semibold">&quot;Add +&quot;</span> button to create a new Practice Area.
+    </li>
+    <li>Ensure that the Practice Area name is descriptive and unique.</li>
+    <li>
+      After submission, the table will automatically update with the new entry.
+    </li>
+    <li>
+      Verify the name before adding to prevent duplicates or incorrect entries.
+    </li>
+    <li>
+      Use the table to view creation and 
+      <span className="text-blue-600 font-semibold"> update </span> 
+      dates for reference.
+    </li>
+    <li>
+      To remove an entry, use the 
+      <span className="text-red-600 font-semibold"> Delete </span> 
+      button. Deletions are permanent, so confirm before proceeding.
+    </li>
+  </ul>
+</div>
+
+
       </div>
     );
   }

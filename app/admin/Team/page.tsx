@@ -564,6 +564,55 @@ export default function TeamPage() {
           setUpdateOpen(true);
         }}
       />
+      
+      <div className="mt-10">
+  <div className="bg-purple-50 border border-purple-200 rounded-xl shadow-sm p-6">
+    <h2 className="text-xl font-bold mb-3 text-purple-900">
+      Admin Instructions
+    </h2>
+    <ul className="list-disc list-inside text-gray-700 space-y-2">
+      <li>
+        This page allows you to <span className="font-semibold">manage team members</span> for the website.
+      </li>
+      <li>
+        Use the <span className="text-green-600 font-semibold">Add +</span> button to create a new team member. 
+        Fill in all required fields such as <span className="font-semibold">name, designation, email, bio</span>, and upload an image.
+      </li>
+      <li>
+        The <span className="font-semibold">profile image link</span> is hosted on 
+        <span className="font-semibold text-sky-600"> Cloudinary</span> and is accessible directly from the table.
+      </li>
+      <li>
+        You can assign multiple <span className="font-semibold">practice areas (expertise)</span> by selecting from the available list.
+      </li>
+      <li>
+        Each member’s <span className="font-semibold">social links</span> (Twitter, LinkedIn, Facebook, Instagram) and 
+        <span className="font-semibold">contacts</span> can also be added.
+      </li>
+      <li>
+        Click the <span className="text-blue-600 font-semibold">Update</span> button to edit an existing team member’s details.
+        The update form is pre-filled with the current information.
+      </li>
+      <li>
+        Use the <span className="text-red-600 font-semibold">Delete</span> button to remove a team member.
+        Deletions are <span className="italic">permanent</span> and cannot be undone.
+      </li>
+      <li>
+        Team members are displayed in a <span className="font-semibold">table</span> with details like 
+        name, designation, email, and profile image link.
+      </li>
+      <li>
+        This page is <span className="font-semibold">restricted</span> to administrators only. Unauthorized users 
+        will be redirected to <span className="font-semibold">Login</span>.
+      </li>
+      <li>
+        Ensure all team member details are accurate, as they will be displayed on the public site.
+      </li>
+    </ul>
+  </div>
+</div>
+
+
     </div>
   );
 }
