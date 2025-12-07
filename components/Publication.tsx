@@ -15,6 +15,7 @@ import {
 } from "../store/slices/publicationSlice";
 import BannerComponent from "./Banner";
 import Heading from "./Heading";
+import Link from "next/link";
 
 
 
@@ -162,18 +163,36 @@ const Publication: React.FC = () => {
               <p className="text-sm text-gray-500 mb-2">
                 {pub.practice_area?.name} | {new Date(pub.published_on).toDateString()}
               </p>
-              <p className="text-gray-700 mb-2 line-clamp-6">{pub.description}</p>
+              {(() => {
+    const MAX_LEN = 180;
+    const desc = pub.description;
+    const shortDesc = desc.length > MAX_LEN ? desc.substring(0, MAX_LEN) : desc;
+
+    return (
+      <p className="text-gray-700 mb-2">
+        {shortDesc}
+        {desc.length > MAX_LEN && (
+          <Link
+            href={`/publications/${pub._id}`}
+            className="text-blue-600 font-bold hover:underline cursor-pointer"
+          >
+            ... Read More
+          </Link>
+        )}
+      </p>
+    );
+  })()}
               <p className="text-sm font-semibold mb-2">
                 Authors: {pub.authors.join(", ")}
               </p>
-              <a
+              {pub.link !="none" && <a
                 href={pub.link}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-blue-600 hover:underline"
               >
-                Read More
-              </a>
+                View Publication
+              </a>}
             </div>
           ))
         )}

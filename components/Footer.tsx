@@ -74,7 +74,7 @@ const Footer = () => {
         </a>
         <a
           href="mailto:info@legalsamadhan.co.in"
-          className="underline text-xs md:text-sm lg:text-lg hover:text-gray-300"
+          className="underline text-xs hidden sm:flex sm:text-xs md:text-sm lg:text-lg hover:text-gray-300"
         >
           info@legalsamadhan.co.in
         </a>

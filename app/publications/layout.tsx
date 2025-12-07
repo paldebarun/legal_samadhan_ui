@@ -10,6 +10,12 @@ export default function PublicationLayout({ children }: { children: ReactNode })
           as="image"
           href="/publications/35db0edc-6cea-4aa8-80b8-361e33d2e618.jpeg"
         />
+        <link
+          rel="preload"
+          as="image"
+          href="/publications/Lady_Justice.jpeg"
+        />
+       
       </Head>
       <main>{children}</main>
     </>
