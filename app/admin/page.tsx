@@ -200,7 +200,6 @@ export default function PublicationTablePage() {
   const handleSubmit = async () => {
     if (
       !formData.title ||
-      !formData.link ||
       !formData.practice_area ||
       !formData.published_on
     ) {
