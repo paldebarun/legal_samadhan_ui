@@ -156,13 +156,13 @@ const Publication: React.FC = () => {
           currentPublications.map((pub, index) => (
             <div
               key={index}
-              className="border rounded-lg h-[300px] p-4 shadow hover:shadow-lg transition"
+              className="border rounded-lg min-h-[300px] p-4 shadow hover:shadow-lg transition"
             >
               <h3 className="text-xl font-bold text-purple-950">{pub.title}</h3>
               <p className="text-sm text-gray-500 mb-2">
                 {pub.practice_area?.name} | {new Date(pub.published_on).toDateString()}
               </p>
-              <p className="text-gray-700 mb-2">{pub.description}</p>
+              <p className="text-gray-700 mb-2 line-clamp-6">{pub.description}</p>
               <p className="text-sm font-semibold mb-2">
                 Authors: {pub.authors.join(", ")}
               </p>
