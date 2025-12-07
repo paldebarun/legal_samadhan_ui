@@ -185,7 +185,7 @@ const Publication: React.FC = () => {
               <p className="text-sm font-semibold mb-2">
                 Authors: {pub.authors.join(", ")}
               </p>
-              {pub.link !="none" && <a
+              {pub.link && pub.link !="none" && <a
                 href={pub.link}
                 target="_blank"
                 rel="noopener noreferrer"

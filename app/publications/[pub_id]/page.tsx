@@ -79,14 +79,16 @@ const PublicationDetailPage = ({ params }: { params: Promise<{ pub_id: string }>
       <p className="text-sm md:text-lg text-gray-800 leading-relaxed  mb-6">{publication.description}</p>
 
 
-     {publication.link !="none" && <a
-        href={publication.link}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="text-blue-600 hover:underline font-medium"
-      >
-        View External Link
-      </a>}
+      {publication.link && publication.link !== "none" && (
+  <a
+    href={publication.link}
+    target="_blank"
+    rel="noopener noreferrer"
+    className="text-blue-600 hover:underline font-medium"
+  >
+    View External Link
+  </a>
+)}
 
       </div>
     </div>
