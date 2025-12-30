@@ -128,9 +128,13 @@ export default function NewsTablePage() {
       };
       fetchNewsEvents();
     }
-  }, [dispatch, newsEvents]);
+  }, [dispatch]);
 
   const handleSubmit = async () => {
+    if (!formData.linkedin_url.trim()) {
+      toast.error("LinkedIn URL is required");
+      return;
+    }
     const toastId = toast.loading("Creating News/Event...");
     try {
       const { data } = await axios.post<CreateNewsEventResponse>(
@@ -167,6 +171,10 @@ export default function NewsTablePage() {
 
   const handleUpdateNewsEvent = async () => {
     if (!selectedNewsEvent) return;
+    if (!selectedNewsEvent.linkedin_url?.trim()) {
+      toast.error("LinkedIn URL is required");
+      return;
+    }
     const toastId = toast.loading("Updating News/Event...");
     try {
       const { data } = await axios.put(`${news_and_events_Url}/${selectedNewsEvent._id}`, selectedNewsEvent);
@@ -232,8 +240,9 @@ export default function NewsTablePage() {
                 onChange={(e) => setFormData({ ...formData, date: e.target.value })}
               />
               <Input
-                placeholder="LinkedIn URL"
+                placeholder="LinkedIn URL *"
                 value={formData.linkedin_url}
+                required
                 onChange={(e) => setFormData({ ...formData, linkedin_url: e.target.value })}
               />
             </div>
@@ -279,8 +288,9 @@ export default function NewsTablePage() {
                 }
               />
               <Input
-                placeholder="LinkedIn URL"
+                placeholder="LinkedIn URL *"
                 value={selectedNewsEvent?.linkedin_url || ""}
+                required
                 onChange={(e) =>
                   setSelectedNewsEvent((prev) => prev ? { ...prev, linkedin_url: e.target.value } : null)
                 }

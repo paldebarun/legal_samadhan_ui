@@ -32,23 +32,24 @@ const News: React.FC = () => {
 
   // -------------------- Fetch News Events --------------------
   useEffect(() => {
-    if (!newsEvents || newsEvents.length === 0) {
-      const fetchNewsEvents = async () => {
-        try {
-          dispatch(setLoading(true));
-          const {data} = await axios.get<NewsEventAPIResponse>(news_and_events_Url);
-          dispatch(setNewsEvents(data.newsEvents));
-        } catch (err) {
-          console.error("Error fetching news & events:", err);
-          dispatch(setError("Failed to fetch news & events"));
-        } finally {
-          dispatch(setLoading(false));
-        }
-      };
+    const fetchNewsEvents = async () => {
+      try {
+        dispatch(setLoading(true));
+        const { data } = await axios.get<NewsEventAPIResponse>(
+          news_and_events_Url
+        );
+        dispatch(setNewsEvents(data.newsEvents));
+      } catch (err) {
+        console.error("Error fetching news & events:", err);
+        dispatch(setError("Failed to fetch news & events"));
+      } finally {
+        dispatch(setLoading(false));
+      }
+    };
   
-      fetchNewsEvents();
-    }
-  }, [dispatch, newsEvents]);
+    fetchNewsEvents();
+  }, [dispatch]);
+  
   
 
   // -------------------- Pagination --------------------
@@ -72,6 +73,12 @@ const News: React.FC = () => {
       {loading ? (
         <div className="col-span-full flex justify-center items-center py-20">
           <div className="w-12 h-12 border-4 border-purple-950 border-t-transparent rounded-full animate-spin"></div>
+        </div>
+      ) : newsEvents.length === 0 ? (
+        <div className="flex justify-center items-center py-20">
+          <p className="text-gray-500 text-lg">
+            No news & events available at the moment.
+          </p>
         </div>
       ) : (
         <>

@@ -1,12 +1,14 @@
 "use client";
 
-import React, { useEffect  } from "react";
+import { useRef, useState } from "react";
+import type { Swiper as SwiperType } from "swiper";
+import  { useEffect  } from "react";
 import "swiper/css";
 import "swiper/css/effect-fade";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { EffectFade, Autoplay } from "swiper/modules";
+import { EffectFade } from "swiper/modules";
 import { useRouter } from "next/navigation";
 import { banner_data } from "../utils/banner_data";
 import { useDispatch, useSelector } from "react-redux";
@@ -33,12 +35,22 @@ import {
 import Heading from './Heading'
 import { PublicationAPIResponse} from "./Publication";
 import { NewsEventAPIResponse } from "./News";
+import Link from "next/link";
 
 
 export default function HomeClient() {
   const router = useRouter();
   const dispatch = useDispatch();
-  
+  const publicationsSwiperRef = useRef<SwiperType | null>(null);
+
+const [isBeginning, setIsBeginning] = useState(true);
+const [isEnd, setIsEnd] = useState(false);
+
+const newsSwiperRef = useRef<SwiperType | null>(null);
+
+const [isNewsBeginning, setIsNewsBeginning] = useState(true);
+const [isNewsEnd, setIsNewsEnd] = useState(false);
+
 
   const { publications, loading: pubLoading } = useSelector(
     (state: RootState) => state.publication
@@ -124,8 +136,8 @@ export default function HomeClient() {
       <section className="hero-section relative w-full">
         <Swiper
           effect="fade"
-          modules={[EffectFade, Autoplay]}
-          autoplay={{ delay: 3000, disableOnInteraction: false }}
+          modules={[EffectFade]}
+          // autoplay={{ delay: 3000, disableOnInteraction: false }}
           className="h-[300px] md:h-[500px] lg:h-[600px]"
         >
           {banner_data.map((slide, idx) => (
@@ -178,20 +190,33 @@ export default function HomeClient() {
             <div className="w-12 h-12 border-4 border-purple-950 border-t-transparent rounded-full animate-spin"></div>
           </div>
         ) : (
-          <Swiper
+          
+          <><Swiper
             spaceBetween={30}
-            centeredSlides={true}
-            autoplay={{
-              delay: 2500,
-              disableOnInteraction: false,
-            }}
-            modules={[Autoplay]}
+            // centeredSlides={true}
+            // autoplay={{
+            //   delay: 2500,
+            //   disableOnInteraction: false,
+            // }}
+            // modules={[Autoplay]}
+            
             className="mySwiper"
             breakpoints={{
               320: { slidesPerView: 1 },
               640: { slidesPerView: 2 },
               1024: { slidesPerView: 3 },
               1440: { slidesPerView: 4 },
+            }}
+
+            onSwiper={(swiper) => {
+              publicationsSwiperRef.current = swiper;
+              setIsBeginning(swiper.isBeginning);
+              setIsEnd(swiper.isEnd);
+            }}
+            
+            onSlideChange={(swiper) => {
+              setIsBeginning(swiper.isBeginning);
+              setIsEnd(swiper.isEnd);
             }}
           >
             {latestPublications.map((pub, index) => (
@@ -203,29 +228,94 @@ export default function HomeClient() {
                   <h3 className="text-xl font-bold mb-2 text-purple-950">
                     {pub.title}
                   </h3>
-                  <p className="text-sm mb-3 line-clamp-3 text-gray-700">
-                    {pub.description}
-                  </p>
-                  <div className="flex justify-between text-xs opacity-80 text-gray-600">
+                  <div className="flex justify-between text-xs opacity-80 mb-3 text-gray-600">
                     <span>{pub.authors?.join(", ")}</span>
                     <span>
                       {new Date(pub.published_on).toISOString().split("T")[0]}
                     </span>
                   </div>
-                  <a
-                    href={pub.link}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-blue-600 underline text-xs mt-2 block"
-                  >
-                    Read More
-                  </a>
+                  {(() => {
+                      const MAX_LEN = 140;
+                      const desc = pub.description || "";
+                      const shortDesc =
+                        desc.length > MAX_LEN
+                          ? desc.substring(0, MAX_LEN)
+                          : desc;
+
+                      return (
+                        <p className="text-sm mb-3 text-gray-700">
+                          {shortDesc}
+                          {desc.length > MAX_LEN && (
+                            <Link
+                              href={`/publications/${pub._id}`}
+                              className="text-blue-600 font-semibold hover:underline ml-1"
+                            >
+                              ... Read More
+                            </Link>
+                          )}
+                        </p>
+                      );
+                    })()}
                 </div>
+                {pub.link && pub.link !== "none" && (
+  <a
+    href={pub.link}
+    target="_blank"
+    rel="noopener noreferrer"
+    className="text-blue-600 text-xs font-medium hover:underline mt-2 inline-block"
+  >
+    View Publication
+  </a>
+
+)}
+
+
               </SwiperSlide>
             ))}
+            
           </Swiper>
+          <div className="flex justify-start  gap-4 m-6 px-2">
+  {/* Left Button */}
+  <button
+  onClick={() => publicationsSwiperRef.current?.slidePrev()}
+  disabled={isBeginning}
+  className={`group flex items-center justify-center w-12 h-12 rounded-full border-2 transition-all duration-300
+    ${
+      isBeginning
+        ? "border-gray-300 text-gray-400 cursor-not-allowed"
+        : "border-purple-900 text-purple-900 hover:bg-purple-900 hover:text-white hover:scale-110 shadow-md"
+    }`}
+  aria-label="Previous publications"
+>
+  <span className="transform transition-transform duration-300 group-hover:-translate-x-0.5">
+    ←
+  </span>
+</button>
+
+<button
+  onClick={() => publicationsSwiperRef.current?.slideNext()}
+  disabled={isEnd}
+  className={`group flex items-center justify-center w-12 h-12 rounded-full border-2 transition-all duration-300
+    ${
+      isEnd
+        ? "border-gray-300 text-gray-400 cursor-not-allowed"
+        : "border-purple-900 text-purple-900 hover:bg-purple-900 hover:text-white hover:scale-110 shadow-md"
+    }`}
+  aria-label="Next publications"
+>
+  <span className="transform transition-transform duration-300 group-hover:translate-x-0.5">
+    →
+  </span>
+</button>
+
+
+</div>
+
+          </>
         )}
       </div>
+      {newsEvents.length > 0 && (
+  <>
 
       {/* Latest News & Events Section */}
 
@@ -238,16 +328,27 @@ export default function HomeClient() {
             <div className="w-12 h-12 border-4 border-purple-950 border-t-transparent rounded-full animate-spin"></div>
           </div>
         ) : (
+          <>
+          
+
           <Swiper
           spaceBetween={30}
-          centeredSlides={true}
-          autoplay={{ delay: 2500, disableOnInteraction: false }}
-          modules={[Autoplay]}
+      
           breakpoints={{
             320: { slidesPerView: 1 },
             640: { slidesPerView: 2 },
             1024: { slidesPerView: 3 },
             1440: { slidesPerView: 4 },
+          }}
+
+          onSwiper={(swiper) => {
+            newsSwiperRef.current = swiper;
+            setIsNewsBeginning(swiper.isBeginning);
+            setIsNewsEnd(swiper.isEnd);
+          }}
+          onSlideChange={(swiper) => {
+            setIsNewsBeginning(swiper.isBeginning);
+            setIsNewsEnd(swiper.isEnd);
           }}
         >
           {newsEvents.map((item, index) => (
@@ -286,8 +387,46 @@ export default function HomeClient() {
             </SwiperSlide>
           ))}
         </Swiper>
+
+        <div className="flex justify-start gap-4 m-6 px-2">
+  {/* Left Button */}
+  <button
+    onClick={() => newsSwiperRef.current?.slidePrev()}
+    disabled={isNewsBeginning}
+    className={`group flex items-center justify-center w-12 h-12 rounded-full border-2 transition-all duration-300
+      ${
+        isNewsBeginning
+          ? "border-gray-300 text-gray-400 cursor-not-allowed"
+          : "border-purple-900 text-purple-900 hover:bg-purple-900 hover:text-white hover:scale-110 shadow-md"
+      }`}
+    aria-label="Previous news"
+  >
+    <span className="transform transition-transform duration-300 group-hover:-translate-x-0.5">
+      ←
+    </span>
+  </button>
+
+  {/* Right Button */}
+  <button
+    onClick={() => newsSwiperRef.current?.slideNext()}
+    disabled={isNewsEnd}
+    className={`group flex items-center justify-center w-12 h-12 rounded-full border-2 transition-all duration-300
+      ${
+        isNewsEnd
+          ? "border-gray-300 text-gray-400 cursor-not-allowed"
+          : "border-purple-900 text-purple-900 hover:bg-purple-900 hover:text-white hover:scale-110 shadow-md"
+      }`}
+    aria-label="Next news"
+  >
+    <span className="transform transition-transform duration-300 group-hover:translate-x-0.5">
+      →
+    </span>
+  </button>
+</div>
+        </>
         )}
       </section>
+      </>)}
     </div>
   );
 }
