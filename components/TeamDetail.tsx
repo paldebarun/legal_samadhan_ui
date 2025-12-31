@@ -134,7 +134,7 @@ const TeamMemberPage: React.FC = () => {
           </div>
 
           {/* LinkedIn */}
-          <div className="flex gap-3 items-center text-white text-md lg:text-xl">
+          {member.linkedin && (<div className="flex gap-3 items-center text-white text-md lg:text-xl">
             <FaLinkedin />
             <a
               href={member.linkedin}
@@ -144,8 +144,8 @@ const TeamMemberPage: React.FC = () => {
             >
               LinkedIn
             </a>
+            </div>)}
           </div>
-        </div>
 
         {/* Image for medium+ screens */}
         <div className="md:w-[300px] lg:w-[400px] mx-auto hidden md:block px-2 py-3">

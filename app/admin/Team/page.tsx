@@ -175,7 +175,13 @@ export default function TeamPage() {
       Object.entries(newMember).forEach(([key, value]) => {
         if (key === "expertise" && Array.isArray(value)) {
           (value as Expertise[]).forEach((v) => formData.append("expertise", v._id));
-        } else if (value) formData.append(key, value as string);
+        } 
+        else if (key === "contacts" && Array.isArray(value)) {
+          (value as string[])
+            .filter((phone) => phone.trim() !== "")
+            .forEach((phone) => formData.append("contacts", phone));
+        }
+        else if (value) formData.append(key, value as string);
       });
   
       if (imageFile) formData.append("imageFile", imageFile);
@@ -229,7 +235,13 @@ export default function TeamPage() {
       Object.entries(selectedMember).forEach(([key, value]) => {
         if (key === "expertise" && Array.isArray(value)) {
           (value as Expertise[]).forEach((v) => formData.append("expertise", v._id));
-        } else if (value) formData.append(key, value as string);
+        } 
+        else if (key === "contacts" && Array.isArray(value)) {
+          value
+            .filter((phone) => phone.trim() !== "")
+            .forEach((phone) => formData.append("contacts", phone));
+        } 
+        else if (value) formData.append(key, value as string);
       });
       if (imageFile) formData.append("imageFile", imageFile);
 
@@ -277,11 +289,14 @@ export default function TeamPage() {
   <DialogTrigger asChild>
     <Button>Add +</Button>
   </DialogTrigger>
-  <DialogContent>
+
+  <DialogContent className="max-h-[100vh] overflow-auto">
     <DialogHeader>
       <DialogTitle>Add Team Member</DialogTitle>
     </DialogHeader>
-    <div className="space-y-4">
+
+    {/* Scrollable Inputs Section */}
+    <div className="max-h-[55vh] overflow-y-auto p-2 space-y-2">
       <Input
         placeholder="Name"
         value={newMember.name || ""}
@@ -289,6 +304,7 @@ export default function TeamPage() {
           setNewMember({ ...newMember, name: e.target.value })
         }
       />
+
       <Input
         placeholder="Designation"
         value={newMember.designation || ""}
@@ -296,6 +312,7 @@ export default function TeamPage() {
           setNewMember({ ...newMember, designation: e.target.value })
         }
       />
+
       <Input
         placeholder="Email"
         type="email"
@@ -304,16 +321,49 @@ export default function TeamPage() {
           setNewMember({ ...newMember, email: e.target.value })
         }
       />
-      <Input
-        placeholder="Contacts (comma separated)"
-        value={newMember.contacts?.join(", ") || ""}
-        onChange={(e) =>
-          setNewMember({
-            ...newMember,
-            contacts: e.target.value.split(",").map((c) => c.trim()),
-          })
-        }
-      />
+
+      {/* Phone Numbers */}
+      <div className="space-y-2 space-x-2">
+        <label className="font-medium">Phone Numbers</label>
+
+        {newMember.contacts?.map((phone, index) => (
+          <div key={index} className="flex gap-2">
+            <Input
+              placeholder="Phone number"
+              value={phone}
+              onChange={(e) => {
+                const updated = [...(newMember.contacts || [])];
+                updated[index] = e.target.value;
+                setNewMember({ ...newMember, contacts: updated });
+              }}
+            />
+            <Button
+              type="button"
+              variant="destructive"
+              onClick={() => {
+                const updated = newMember.contacts?.filter((_, i) => i !== index);
+                setNewMember({ ...newMember, contacts: updated });
+              }}
+            >
+              Remove
+            </Button>
+          </div>
+        ))}
+
+        <Button
+          type="button"
+          variant="outline"
+          onClick={() =>
+            setNewMember({
+              ...newMember,
+              contacts: [...(newMember.contacts || []), ""],
+            })
+          }
+        >
+          + Add Phone Number
+        </Button>
+      </div>
+
       <Input
         placeholder="Bio"
         value={newMember.bio || ""}
@@ -321,6 +371,7 @@ export default function TeamPage() {
           setNewMember({ ...newMember, bio: e.target.value })
         }
       />
+
       <Input
         placeholder="Twitter"
         value={newMember.twitter || ""}
@@ -328,6 +379,7 @@ export default function TeamPage() {
           setNewMember({ ...newMember, twitter: e.target.value })
         }
       />
+
       <Input
         placeholder="LinkedIn"
         value={newMember.linkedin || ""}
@@ -335,6 +387,7 @@ export default function TeamPage() {
           setNewMember({ ...newMember, linkedin: e.target.value })
         }
       />
+
       <Input
         placeholder="Facebook"
         value={newMember.facebook || ""}
@@ -342,6 +395,7 @@ export default function TeamPage() {
           setNewMember({ ...newMember, facebook: e.target.value })
         }
       />
+
       <Input
         placeholder="Instagram"
         value={newMember.instagram || ""}
@@ -349,187 +403,70 @@ export default function TeamPage() {
           setNewMember({ ...newMember, instagram: e.target.value })
         }
       />
+
+      {/* Locations */}
+<div className="space-y-2 space-x-2">
+  <label className="font-medium">Locations</label>
+
+  {newMember.location?.map((loc, index) => (
+    <div key={index} className="flex gap-2">
       <Input
-        placeholder="Location (comma separated)"
-        value={newMember.location?.join(", ") || ""}
-        onChange={(e) =>
-          setNewMember({
-            ...newMember,
-            location: e.target.value.split(",").map((l) => l.trim()),
-          })
-        }
+        placeholder="Location"
+        value={loc}
+        onChange={(e) => {
+          const updated = [...(newMember.location || [])];
+          updated[index] = e.target.value;
+          setNewMember({ ...newMember, location: updated });
+        }}
       />
-      {/* Expertise Multi-select */}
-      <div className="space-y-2">
-  <label className="font-medium">Expertise</label>
-  <div className="flex flex-col space-y-1 max-h-40 overflow-y-auto border p-2 rounded">
-    {practiceareas.map((pa) => (
-      <div key={pa._id} className="flex items-center space-x-2">
-        <Checkbox
-          checked={!!newMember.expertise?.some((e) => e._id === pa._id)}
-          onCheckedChange={(checked) => {
-            let updatedExpertise = newMember.expertise ? [...newMember.expertise] : [];
-            if (checked) {
-              // Add if checked
-              updatedExpertise.push({ _id: pa._id, name: pa.name });
-            } else {
-              // Remove if unchecked
-              updatedExpertise = updatedExpertise.filter((e) => e._id !== pa._id);
-            }
-            setNewMember({ ...newMember, expertise: updatedExpertise });
-          }}
-        />
-        <span>{pa.name}</span>
-      </div>
-    ))}
-  </div>
-</div>
-      <Input
-        type="file"
-        onChange={(e) =>
-          setImageFile(e.target.files ? e.target.files[0] : null)
-        }
-      />
-      <Button onClick={handleAddMember} className="w-full">
-        Submit
+
+      <Button
+        type="button"
+        variant="destructive"
+        onClick={() => {
+          const updated = newMember.location?.filter((_, i) => i !== index);
+          setNewMember({ ...newMember, location: updated });
+        }}
+      >
+        Remove
       </Button>
     </div>
-  </DialogContent>
-</Dialog>
+  ))}
 
+  <Button
+    type="button"
+    variant="outline"
+    onClick={() =>
+      setNewMember({
+        ...newMember,
+        location: [...(newMember.location || []), ""],
+      })
+    }
+  >
+    + Add Location
+  </Button>
+</div>
 
+    </div>
 
-        {/* Update Modal */}
-        {/* Update Modal */}
-<Dialog open={updateOpen} onOpenChange={setUpdateOpen}>
-  <DialogContent>
-    <DialogHeader>
-      <DialogTitle>Update Team Member</DialogTitle>
-    </DialogHeader>
-    <div className="space-y-4">
-      <Input
-        placeholder="Name"
-        value={selectedMember?.name || ""}
-        onChange={(e) =>
-          setSelectedMember((prev) =>
-            prev ? { ...prev, name: e.target.value } : null
-          )
-        }
-      />
-      <Input
-        placeholder="Designation"
-        value={selectedMember?.designation || ""}
-        onChange={(e) =>
-          setSelectedMember((prev) =>
-            prev ? { ...prev, designation: e.target.value } : null
-          )
-        }
-      />
-      <Input
-        placeholder="Email"
-        type="email"
-        value={selectedMember?.email || ""}
-        onChange={(e) =>
-          setSelectedMember((prev) =>
-            prev ? { ...prev, email: e.target.value } : null
-          )
-        }
-      />
-      <Input
-        placeholder="Contacts (comma separated)"
-        value={selectedMember?.contacts?.join(", ") || ""}
-        onChange={(e) =>
-          setSelectedMember((prev) =>
-            prev
-              ? {
-                  ...prev,
-                  contacts: e.target.value.split(",").map((c) => c.trim()),
-                }
-              : null
-          )
-        }
-      />
-      <Input
-        placeholder="Bio"
-        value={selectedMember?.bio || ""}
-        onChange={(e) =>
-          setSelectedMember((prev) =>
-            prev ? { ...prev, bio: e.target.value } : null
-          )
-        }
-      />
-      <Input
-        placeholder="Twitter"
-        value={selectedMember?.twitter || ""}
-        onChange={(e) =>
-          setSelectedMember((prev) =>
-            prev ? { ...prev, twitter: e.target.value } : null
-          )
-        }
-      />
-      <Input
-        placeholder="LinkedIn"
-        value={selectedMember?.linkedin || ""}
-        onChange={(e) =>
-          setSelectedMember((prev) =>
-            prev ? { ...prev, linkedin: e.target.value } : null
-          )
-        }
-      />
-      <Input
-        placeholder="Facebook"
-        value={selectedMember?.facebook || ""}
-        onChange={(e) =>
-          setSelectedMember((prev) =>
-            prev ? { ...prev, facebook: e.target.value } : null
-          )
-        }
-      />
-      <Input
-        placeholder="Instagram"
-        value={selectedMember?.instagram || ""}
-        onChange={(e) =>
-          setSelectedMember((prev) =>
-            prev ? { ...prev, instagram: e.target.value } : null
-          )
-        }
-      />
-      <Input
-        placeholder="Location (comma separated)"
-        value={selectedMember?.location?.join(", ") || ""}
-        onChange={(e) =>
-          setSelectedMember((prev) =>
-            prev
-              ? {
-                  ...prev,
-                  location: e.target.value.split(",").map((l) => l.trim()),
-                }
-              : null
-          )
-        }
-      />
-
-      {/* Expertise Multi-select */}
+    {/* Fixed Bottom Section */}
+    <div className="pt-4 space-y-4 border-t">
+      {/* Expertise */}
       <div className="space-y-2">
         <label className="font-medium">Expertise</label>
         <div className="flex flex-col space-y-1 max-h-40 overflow-y-auto border p-2 rounded">
           {practiceareas.map((pa) => (
             <div key={pa._id} className="flex items-center space-x-2">
               <Checkbox
-                checked={!!selectedMember?.expertise?.some((e) => e._id === pa._id)}
+                checked={!!newMember.expertise?.some((e) => e._id === pa._id)}
                 onCheckedChange={(checked) => {
-                  if (!selectedMember) return;
-                  let updatedExpertise = selectedMember.expertise
-                    ? [...selectedMember.expertise]
+                  let updated = newMember.expertise
+                    ? [...newMember.expertise]
                     : [];
-                  if (checked) {
-                    updatedExpertise.push({ _id: pa._id, name: pa.name });
-                  } else {
-                    updatedExpertise = updatedExpertise.filter(
-                      (e) => e._id !== pa._id
-                    );
-                  }
-                  setSelectedMember({ ...selectedMember, expertise: updatedExpertise });
+                  checked
+                    ? updated.push({ _id: pa._id, name: pa.name })
+                    : (updated = updated.filter((e) => e._id !== pa._id));
+                  setNewMember({ ...newMember, expertise: updated });
                 }}
               />
               <span>{pa.name}</span>
@@ -544,6 +481,241 @@ export default function TeamPage() {
           setImageFile(e.target.files ? e.target.files[0] : null)
         }
       />
+
+      <Button onClick={handleAddMember} className="w-full">
+        Submit
+      </Button>
+    </div>
+  </DialogContent>
+</Dialog>
+
+
+
+
+
+        {/* Update Modal */}
+        <Dialog open={updateOpen} onOpenChange={setUpdateOpen}>
+  <DialogContent className="max-h-[100vh] overflow-auto">
+    <DialogHeader>
+      <DialogTitle>Update Team Member</DialogTitle>
+    </DialogHeader>
+
+    {/* Scrollable Inputs Section */}
+    <div className="max-h-[55vh] overflow-y-auto p-2 space-y-2">
+      <Input
+        placeholder="Name"
+        value={selectedMember?.name || ""}
+        onChange={(e) =>
+          setSelectedMember((prev) =>
+            prev ? { ...prev, name: e.target.value } : null
+          )
+        }
+      />
+
+      <Input
+        placeholder="Designation"
+        value={selectedMember?.designation || ""}
+        onChange={(e) =>
+          setSelectedMember((prev) =>
+            prev ? { ...prev, designation: e.target.value } : null
+          )
+        }
+      />
+
+      <Input
+        placeholder="Email"
+        type="email"
+        value={selectedMember?.email || ""}
+        onChange={(e) =>
+          setSelectedMember((prev) =>
+            prev ? { ...prev, email: e.target.value } : null
+          )
+        }
+      />
+
+      {/* Phone Numbers */}
+      <div className="space-y-2 space-x-2">
+        <label className="font-medium">Phone Numbers</label>
+
+        {selectedMember?.contacts?.map((phone, index) => (
+          <div key={index} className="flex gap-2">
+            <Input
+              placeholder="Phone number"
+              value={phone}
+              onChange={(e) => {
+                if (!selectedMember) return;
+                const updated = [...selectedMember.contacts];
+                updated[index] = e.target.value;
+                setSelectedMember({ ...selectedMember, contacts: updated });
+              }}
+            />
+
+            <Button
+              type="button"
+              variant="destructive"
+              onClick={() => {
+                if (!selectedMember) return;
+                const updated = selectedMember.contacts.filter(
+                  (_, i) => i !== index
+                );
+                setSelectedMember({ ...selectedMember, contacts: updated });
+              }}
+            >
+              Remove
+            </Button>
+          </div>
+        ))}
+
+        <Button
+          type="button"
+          variant="outline"
+          onClick={() => {
+            if (!selectedMember) return;
+            setSelectedMember({
+              ...selectedMember,
+              contacts: [...(selectedMember.contacts || []), ""],
+            });
+          }}
+        >
+          + Add Phone Number
+        </Button>
+      </div>
+
+      <Input
+        placeholder="Bio"
+        value={selectedMember?.bio || ""}
+        onChange={(e) =>
+          setSelectedMember((prev) =>
+            prev ? { ...prev, bio: e.target.value } : null
+          )
+        }
+      />
+
+      <Input
+        placeholder="Twitter"
+        value={selectedMember?.twitter || ""}
+        onChange={(e) =>
+          setSelectedMember((prev) =>
+            prev ? { ...prev, twitter: e.target.value } : null
+          )
+        }
+      />
+
+      <Input
+        placeholder="LinkedIn"
+        value={selectedMember?.linkedin || ""}
+        onChange={(e) =>
+          setSelectedMember((prev) =>
+            prev ? { ...prev, linkedin: e.target.value } : null
+          )
+        }
+      />
+
+      <Input
+        placeholder="Facebook"
+        value={selectedMember?.facebook || ""}
+        onChange={(e) =>
+          setSelectedMember((prev) =>
+            prev ? { ...prev, facebook: e.target.value } : null
+          )
+        }
+      />
+
+      <Input
+        placeholder="Instagram"
+        value={selectedMember?.instagram || ""}
+        onChange={(e) =>
+          setSelectedMember((prev) =>
+            prev ? { ...prev, instagram: e.target.value } : null
+          )
+        }
+      />
+
+      {/* Locations */}
+      <div className="space-y-2 space-x-2">
+        <label className="font-medium">Locations</label>
+
+        {selectedMember?.location?.map((loc, index) => (
+          <div key={index} className="flex gap-2">
+            <Input
+              placeholder="Location"
+              value={loc}
+              onChange={(e) => {
+                if (!selectedMember) return;
+                const updated = [...selectedMember.location];
+                updated[index] = e.target.value;
+                setSelectedMember({ ...selectedMember, location: updated });
+              }}
+            />
+
+            <Button
+              type="button"
+              variant="destructive"
+              onClick={() => {
+                if (!selectedMember) return;
+                const updated = selectedMember.location.filter(
+                  (_, i) => i !== index
+                );
+                setSelectedMember({ ...selectedMember, location: updated });
+              }}
+            >
+              Remove
+            </Button>
+          </div>
+        ))}
+
+        <Button
+          type="button"
+          variant="outline"
+          onClick={() => {
+            if (!selectedMember) return;
+            setSelectedMember({
+              ...selectedMember,
+              location: [...(selectedMember.location || []), ""],
+            });
+          }}
+        >
+          + Add Location
+        </Button>
+      </div>
+    </div>
+
+    {/* Fixed Bottom Section */}
+    <div className="pt-4 space-y-4 border-t">
+      {/* Expertise */}
+      <div className="space-y-2">
+        <label className="font-medium">Expertise</label>
+        <div className="flex flex-col space-y-1 max-h-40 overflow-y-auto border p-2 rounded">
+          {practiceareas.map((pa) => (
+            <div key={pa._id} className="flex items-center space-x-2">
+              <Checkbox
+                checked={!!selectedMember?.expertise?.some(
+                  (e) => e._id === pa._id
+                )}
+                onCheckedChange={(checked) => {
+                  if (!selectedMember) return;
+                  let updated = selectedMember.expertise
+                    ? [...selectedMember.expertise]
+                    : [];
+                  checked
+                    ? updated.push({ _id: pa._id, name: pa.name })
+                    : (updated = updated.filter((e) => e._id !== pa._id));
+                  setSelectedMember({ ...selectedMember, expertise: updated });
+                }}
+              />
+              <span>{pa.name}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <Input
+        type="file"
+        onChange={(e) =>
+          setImageFile(e.target.files ? e.target.files[0] : null)
+        }
+      />
+
       <Button onClick={handleUpdateMember} className="w-full">
         Update
       </Button>
