@@ -153,7 +153,13 @@ const Publication: React.FC = () => {
           <div className="col-span-full flex justify-center items-center py-20">
             <div className="w-12 h-12 border-4 border-purple-950 border-t-transparent rounded-full animate-spin"></div>
           </div>
-        ) : (
+        ) : currentPublications.length === 0 ? (
+          <div className="col-span-full text-center py-20">
+            <p className="text-gray-500 text-lg font-medium">
+              No publications to show
+            </p>
+          </div>
+        ):(
           currentPublications.map((pub, index) => (
             <div
               key={index}

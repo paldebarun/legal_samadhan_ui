@@ -168,6 +168,7 @@ const [isNewsEnd, setIsNewsEnd] = useState(false);
       
 
       {/* Latest Publications Section */}
+      {latestPublications.length > 0 && (<>
       <Heading first_text="Latest " second_text="Publications" />
 
       <div className="w-full md:py-10 px-6">
@@ -314,6 +315,8 @@ const [isNewsEnd, setIsNewsEnd] = useState(false);
           </>
         )}
       </div>
+      </>
+      )}
       {newsEvents.length > 0 && (
   <>
 
