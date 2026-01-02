@@ -184,39 +184,64 @@ const Team: React.FC = () => {
         ) : (
           filteredTeam.map(member => (
             <div
-              key={member._id}
-              className="md:w-full w-[250px] h-[350px] md:h-[350px] lg:w-[250px] lg:h-[350px]  hover:cursor-pointer relative group overflow-hidden rounded-lg"
-              style={{
-                backgroundImage: `url('${member.image_url}')`,
-                backgroundSize: "cover",
-                backgroundPosition: "center",
-                backgroundRepeat: "no-repeat",
-              }}
-            >
-              {/* Overlay */}
-              <div
-                className="detail-cover absolute top-0 left-0 w-full h-0 group-hover:h-full bg-purple-900/60 transition-[height] duration-500
-                ease-in-out flex items-end"
-                onClick={() => router.push(`/team/${member._id}`)}
-              >
-                <div className="p-4">
-                  <p className="text-white text-xs md:text-sm lg:text-md leading-normal relative">
-                    {member.bio.length > 300 ? member.bio.slice(0, 300) + "..." : member.bio}
-                  </p>
-                  <IoIosArrowRoundForward className="text-white text-4xl mt-2" />
-                </div>
-              </div>
+  key={member._id}
+  className="md:w-full w-[250px] h-[350px] md:h-[350px] lg:w-[250px] lg:h-[350px]
+             hover:cursor-pointer relative group overflow-hidden rounded-lg"
+  style={{
+    backgroundImage: `url('${member.image_url}')`,
+    backgroundSize: "cover",
+    backgroundPosition: "center",
+    backgroundRepeat: "no-repeat",
+  }}
+>
+  {/* Purple Hover Overlay */}
+  <div
+    className="detail-cover absolute top-0 left-0 w-full h-0 
+               group-hover:h-full bg-purple-900/60 
+               transition-[height] duration-500 ease-in-out 
+               flex items-end z-20"
+    onClick={() => router.push(`/team/${member._id}`)}
+  >
+    <div className="p-4">
+      {/* Name & Designation on Hover */}
+      <p className="text-white font-bold text-sm md:text-md lg:text-xl">
+        {member.name}
+      </p>
+      <p className="text-white/80 text-xs md:text-sm mb-2">
+        {member.designation}
+      </p>
 
-              {/* Name & Designation */}
-              <div className="absolute top-4 left-4">
-                <p className="text-black relative leading-normal font-bold text-sm sm:text-md lg:text-xl group-hover:text-white">
-                  {member.name}
-                </p>
-                <p className="text-slate-500 relative leading-normal group-hover:text-white">
-                  {member.designation}
-                </p>
-              </div>
-            </div>
+      <p className="text-white text-xs md:text-sm lg:text-md leading-normal">
+        {member.bio.length > 300
+          ? member.bio.slice(0, 300) + "..."
+          : member.bio}
+      </p>
+
+      <IoIosArrowRoundForward className="text-white text-4xl mt-2" />
+    </div>
+  </div>
+
+  {/* Bottom Info Section (slides down & hides on hover) */}
+ {/* Floating Name Badge */}
+ <div
+  className="absolute bottom-0 left-0 w-full z-30
+             bg-gradient-to-t from-black/90 via-black/60 to-transparent
+             px-4 pb-4 pt-10
+             transition-all duration-300
+             group-hover:opacity-0"
+>
+  <p className="text-white font-semibold text-sm md:text-md drop-shadow-md">
+    {member.name}
+  </p>
+  <p className="text-white/70 text-xs md:text-sm">
+    {member.designation}
+  </p>
+</div>
+
+
+
+</div>
+
           ))
         )}
       </div>
