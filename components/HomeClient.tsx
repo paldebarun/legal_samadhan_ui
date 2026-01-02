@@ -8,7 +8,7 @@ import "swiper/css/effect-fade";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { EffectFade } from "swiper/modules";
+import { Autoplay, EffectFade } from "swiper/modules";
 import { useRouter } from "next/navigation";
 import { banner_data } from "../utils/banner_data";
 import { useDispatch, useSelector } from "react-redux";
@@ -136,8 +136,8 @@ const [isNewsEnd, setIsNewsEnd] = useState(false);
       <section className="hero-section relative w-full">
         <Swiper
           effect="fade"
-          modules={[EffectFade]}
-          // autoplay={{ delay: 3000, disableOnInteraction: false }}
+          modules={[EffectFade,Autoplay]}
+          autoplay={{ delay: 3000, disableOnInteraction: false }}
           className="h-[300px] md:h-[500px] lg:h-[600px]"
         >
           {banner_data.map((slide, idx) => (
