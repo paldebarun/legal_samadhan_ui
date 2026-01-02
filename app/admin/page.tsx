@@ -112,13 +112,14 @@ export default function PublicationTablePage() {
     const [addOpen, setAddOpen] = useState(false);
     const [updateOpen, setUpdateOpen] = useState(false);
     const [formData, setFormData] = useState({
-        practice_area: "",
-        published_on: "",
-        authors: "",
-        title: "",
-        description: "",
-        link: "",
+      practice_area: "",
+      published_on: "",
+      authors: [""], 
+      title: "",
+      description: "",
+      link: "",
     });
+    
     const [selectedPublication, setSelectedPublication] =useState<Publication | null>(null);
     
     useEffect(() => {
@@ -212,9 +213,9 @@ export default function PublicationTablePage() {
       const payload = {
         ...formData,
         authors: formData.authors
-          .split(",")
-          .map((a) => a.trim())
-          .filter((a) => a.length > 0),
+  .map((a) => a.trim())
+  .filter((a) => a.length > 0),
+
       };
       const { data } = await axios.post<CreatePublicationResponse>(
         publications_Url,
@@ -241,7 +242,7 @@ export default function PublicationTablePage() {
         setFormData({
           practice_area: "",
           published_on: "",
-          authors: "",
+          authors: [],
           title: "",
           description: "",
           link: "",
@@ -262,7 +263,10 @@ export default function PublicationTablePage() {
     try {
       const payload = {
         ...selectedPublication,
-        authors: selectedPublication.authors.join(","),
+        authors: selectedPublication.authors
+  .map((a) => a.trim())
+  .filter(Boolean),
+
       };
       const { data } = await axios.put(
         `${publications_Url}/${selectedPublication._id}`,
@@ -397,13 +401,49 @@ export default function PublicationTablePage() {
               </div>{" "}
               <div className="grid gap-2">
                 {" "}
-                <Label>Authors (comma separated)</Label>{" "}
-                <Input
-                  value={formData.authors}
-                  onChange={(e) =>
-                    setFormData({ ...formData, authors: e.target.value })
-                  }
-                />{" "}
+                <div className="space-y-2">
+  <Label>Authors</Label>
+
+  {formData.authors.map((author, index) => (
+    <div key={index} className="flex gap-2">
+      <Input
+        placeholder="Author name"
+        value={author}
+        onChange={(e) => {
+          const updated = [...formData.authors];
+          updated[index] = e.target.value;
+          setFormData({ ...formData, authors: updated });
+        }}
+      />
+
+      <Button
+        type="button"
+        variant="destructive"
+        onClick={() => {
+          const updated = formData.authors.filter((_, i) => i !== index);
+          setFormData({ ...formData, authors: updated });
+        }}
+        disabled={formData.authors.length === 1}
+      >
+        Remove
+      </Button>
+    </div>
+  ))}
+
+  <Button
+    type="button"
+    variant="outline"
+    onClick={() =>
+      setFormData({
+        ...formData,
+        authors: [...formData.authors, ""],
+      })
+    }
+  >
+    + Add Author
+  </Button>
+</div>
+{" "}
               </div>{" "}
               <div className="grid gap-2">
                 {" "}
@@ -484,21 +524,60 @@ export default function PublicationTablePage() {
                   )
                 }
               />
-              <Input
-                value={selectedPublication?.authors.join(",") || ""}
-                onChange={(e) =>
-                  setSelectedPublication((prev) =>
-                    prev
-                      ? {
-                          ...prev,
-                          authors: e.target.value
-                            .split(",")
-                            .map((a) => a.trim()),
-                        }
-                      : null
-                  )
-                }
-              />
+             <div className="space-y-2">
+  <Label>Authors</Label>
+
+  {selectedPublication?.authors.map((author, index) => (
+    <div key={index} className="flex gap-2">
+      <Input
+        placeholder="Author name"
+        value={author}
+        onChange={(e) => {
+          if (!selectedPublication) return;
+          const updated = [...selectedPublication.authors];
+          updated[index] = e.target.value;
+          setSelectedPublication({
+            ...selectedPublication,
+            authors: updated,
+          });
+        }}
+      />
+
+      <Button
+        type="button"
+        variant="destructive"
+        onClick={() => {
+          if (!selectedPublication) return;
+          const updated = selectedPublication.authors.filter(
+            (_, i) => i !== index
+          );
+          setSelectedPublication({
+            ...selectedPublication,
+            authors: updated,
+          });
+        }}
+        disabled={selectedPublication.authors.length === 1}
+      >
+        Remove
+      </Button>
+    </div>
+  ))}
+
+  <Button
+    type="button"
+    variant="outline"
+    onClick={() => {
+      if (!selectedPublication) return;
+      setSelectedPublication({
+        ...selectedPublication,
+        authors: [...selectedPublication.authors, ""],
+      });
+    }}
+  >
+    + Add Author
+  </Button>
+</div>
+
               <Input
                 type="date"
                 value={selectedPublication?.published_on || ""}
@@ -529,9 +608,15 @@ export default function PublicationTablePage() {
         data={publications}
         onDelete={handleDeletePublication}
         onUpdate={(publication) => {
-          setSelectedPublication(publication);
+          setSelectedPublication({
+            ...publication,
+            authors: publication.authors.length
+              ? publication.authors
+              : [""],
+          });
           setUpdateOpen(true);
         }}
+        
       />
 
       {/* Admin Instructions */}
